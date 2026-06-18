@@ -1980,7 +1980,9 @@ export default function App(){
       <div className="app" style={{alignItems:"center",justifyContent:"center"}}>
         <div style={{textAlign:"center"}}>
           <div style={{width:44,height:44,borderRadius:"50%",border:"3px solid var(--tl)",borderTopColor:"transparent",margin:"0 auto 14px",animation:"sp .75s linear infinite"}}/>
-          <p style={{color:"var(--m)",fontSize:12,fontWeight:600}}>Cargando…</p>
+          <p style={{color:"var(--m)",fontSize:12,fontWeight:600}}>
+            {user&&supabaseEnabled&&!dataReady?"Sincronizando tus datos…":"Cargando…"}
+          </p>
         </div>
       </div>
     </>
