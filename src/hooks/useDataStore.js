@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '../lib/supabase.js'
 import { SEED } from '../data/seed.js'
+import { mergeById, mergeDismissed, idsRemoved, snapshotIds } from '../lib/sync.js'
 
 function useLocalStore(key, init) {
   const [val, set] = useState(init)
@@ -41,7 +42,7 @@ function cardToDb(c, userId) {
     cut_day: c.cutDay,
     pay_day: c.payDay,
     holder: c.holder || '',
-    updated_at: new Date().toISOString(),
+    updated_at: c.updatedAt || new Date().toISOString(),
   }
 }
 
@@ -57,6 +58,7 @@ function cardFromDb(r) {
     cutDay: r.cut_day,
     payDay: r.pay_day,
     holder: r.holder,
+    updatedAt: r.updated_at,
   }
 }
 
@@ -86,28 +88,60 @@ function txnFromDb(r) {
     cuotas: r.cuotas,
     cuotaNum: r.cuota_num,
     note: r.note || '',
+    updatedAt: r.created_at,
   }
 }
 
-async function syncAllToSupabase(userId, cards, txns, disIds) {
+function stampCards(cards) {
+  const now = new Date().toISOString()
+  return cards.map(c => ({ ...c, updatedAt: c.updatedAt || now }))
+}
+
+async function syncIncrementalToSupabase(userId, cards, txns, disIds, prevIds) {
   if (!supabase) return
 
-  await supabase.from('cards').delete().eq('user_id', userId)
-  await supabase.from('transactions').delete().eq('user_id', userId)
-  await supabase.from('dismissed_alerts').delete().eq('user_id', userId)
+  const stampedCards = stampCards(cards)
 
-  if (cards.length) {
-    const { error } = await supabase.from('cards').insert(cards.map(c => cardToDb(c, userId)))
+  if (stampedCards.length) {
+    const { error } = await supabase
+      .from('cards')
+      .upsert(stampedCards.map(c => cardToDb(c, userId)), { onConflict: 'id' })
     if (error) throw error
   }
+
+  const removedCards = idsRemoved(prevIds?.cards || [], stampedCards.map(c => c.id))
+  if (removedCards.length) {
+    const { error } = await supabase.from('cards').delete().in('id', removedCards).eq('user_id', userId)
+    if (error) throw error
+  }
+
   if (txns.length) {
-    const { error } = await supabase.from('transactions').insert(txns.map(t => txnToDb(t, userId)))
+    const { error } = await supabase
+      .from('transactions')
+      .upsert(txns.map(t => txnToDb(t, userId)), { onConflict: 'id' })
     if (error) throw error
   }
+
+  const removedTxns = idsRemoved(prevIds?.txns || [], txns.map(t => t.id))
+  if (removedTxns.length) {
+    const { error } = await supabase.from('transactions').delete().in('id', removedTxns).eq('user_id', userId)
+    if (error) throw error
+  }
+
   if (disIds.length) {
-    const { error } = await supabase.from('dismissed_alerts').insert(
-      disIds.map(alert_id => ({ user_id: userId, alert_id }))
-    )
+    const { error } = await supabase
+      .from('dismissed_alerts')
+      .upsert(disIds.map(alert_id => ({ user_id: userId, alert_id })), { onConflict: 'user_id,alert_id' })
+    if (error) throw error
+  }
+
+  const removedDis = idsRemoved(prevIds?.disIds || [], disIds)
+  if (removedDis.length) {
+    const { error } = await supabase
+      .from('dismissed_alerts')
+      .delete()
+      .eq('user_id', userId)
+      .in('alert_id', removedDis)
     if (error) throw error
   }
 }
@@ -123,11 +157,11 @@ async function loadFromSupabase(userId) {
   if (txnsRes.error) throw txnsRes.error
   if (disRes.error) throw disRes.error
 
-  return {
-    cards: (cardsRes.data || []).map(cardFromDb),
-    txns: (txnsRes.data || []).map(txnFromDb),
-    disIds: (disRes.data || []).map(r => r.alert_id),
-  }
+  const cards = (cardsRes.data || []).map(cardFromDb)
+  const txns = (txnsRes.data || []).map(txnFromDb)
+  const disIds = (disRes.data || []).map(r => r.alert_id)
+
+  return { cards, txns, disIds, remoteIds: snapshotIds(cards, txns, disIds) }
 }
 
 export function useDataStore(user) {
@@ -135,18 +169,26 @@ export function useDataStore(user) {
   const [txns, setTxnsLocal, txnsReady] = useLocalStore('cfv6_txns', [])
   const [disIds, setDisIdsLocal, disReady] = useLocalStore('cfv6_dis', [])
   const [cloudReady, setCloudReady] = useState(!user)
+  const [syncStatus, setSyncStatus] = useState(user ? 'syncing' : 'idle')
+  const [syncError, setSyncError] = useState(null)
+
   const syncingRef = useRef(false)
   const skipSyncRef = useRef(false)
+  const remoteIdsRef = useRef({ cards: [], txns: [], disIds: [] })
 
   const ready = cardsReady && txnsReady && disReady && cloudReady
 
   useEffect(() => {
     if (!user || !supabase) {
       setCloudReady(true)
+      setSyncStatus('idle')
       return
     }
 
     let cancelled = false
+    setSyncStatus('syncing')
+    setSyncError(null)
+
     ;(async () => {
       try {
         const remote = await loadFromSupabase(user.id)
@@ -156,17 +198,41 @@ export function useDataStore(user) {
         const localTxns = JSON.parse(localStorage.getItem('cfv6_txns') || '[]')
         const localDis = JSON.parse(localStorage.getItem('cfv6_dis') || '[]')
         const hasLocal = localCards.length > 0 || localTxns.length > 0
+        const hasRemote = remote.cards.length > 0 || remote.txns.length > 0
 
         skipSyncRef.current = true
-        if (remote.cards.length || remote.txns.length) {
-          await setCardsLocal(remote.cards)
-          await setTxnsLocal(remote.txns)
-          await setDisIdsLocal(remote.disIds)
-        } else if (hasLocal) {
-          await syncAllToSupabase(user.id, localCards, localTxns, localDis)
+
+        let mergedCards = remote.cards
+        let mergedTxns = remote.txns
+        let mergedDis = remote.disIds
+
+        if (hasLocal && hasRemote) {
+          mergedCards = mergeById(remote.cards, localCards)
+          mergedTxns = mergeById(remote.txns, localTxns)
+          mergedDis = mergeDismissed(remote.disIds, localDis)
+        } else if (hasLocal && !hasRemote) {
+          mergedCards = localCards
+          mergedTxns = localTxns
+          mergedDis = localDis
+        }
+
+        await setCardsLocal(mergedCards)
+        await setTxnsLocal(mergedTxns)
+        await setDisIdsLocal(mergedDis)
+
+        remoteIdsRef.current = snapshotIds(mergedCards, mergedTxns, mergedDis)
+        await syncIncrementalToSupabase(user.id, mergedCards, mergedTxns, mergedDis, remote.remoteIds)
+
+        if (!cancelled) {
+          setSyncStatus('synced')
+          setSyncError(null)
         }
       } catch (err) {
         console.error('Error cargando datos de Supabase:', err)
+        if (!cancelled) {
+          setSyncStatus('error')
+          setSyncError(err.message || 'Error de sincronización')
+        }
       } finally {
         if (!cancelled) setCloudReady(true)
         skipSyncRef.current = false
@@ -174,15 +240,24 @@ export function useDataStore(user) {
     })()
 
     return () => { cancelled = true }
-  }, [user?.id])
+  }, [user?.id, setCardsLocal, setTxnsLocal, setDisIdsLocal])
 
   const syncToCloud = useCallback(async (nextCards, nextTxns, nextDis) => {
     if (!user || !supabase || skipSyncRef.current || syncingRef.current) return
+
     syncingRef.current = true
+    setSyncStatus('syncing')
+    setSyncError(null)
+
+    const prevIds = remoteIdsRef.current
     try {
-      await syncAllToSupabase(user.id, nextCards, nextTxns, nextDis)
+      await syncIncrementalToSupabase(user.id, nextCards, nextTxns, nextDis, prevIds)
+      remoteIdsRef.current = snapshotIds(nextCards, nextTxns, nextDis)
+      setSyncStatus('synced')
     } catch (err) {
       console.error('Error sincronizando con Supabase:', err)
+      setSyncStatus('error')
+      setSyncError(err.message || 'Error de sincronización')
     } finally {
       syncingRef.current = false
     }
@@ -214,13 +289,17 @@ export function useDataStore(user) {
 
   const loadDemo = useCallback(async () => {
     skipSyncRef.current = true
-    await setCardsLocal(SEED.cards)
+    const demoCards = stampCards(SEED.cards)
+    await setCardsLocal(demoCards)
     await setTxnsLocal(SEED.txns)
     skipSyncRef.current = false
     if (user && supabase) {
-      await syncAllToSupabase(user.id, SEED.cards, SEED.txns, disIds)
+      await syncToCloud(demoCards, SEED.txns, disIds)
     }
-  }, [setCardsLocal, setTxnsLocal, user, disIds])
+  }, [setCardsLocal, setTxnsLocal, user, disIds, syncToCloud])
 
-  return { cards, setCards, txns, setTxns, disIds, setDisIds, ready, loadDemo }
+  return {
+    cards, setCards, txns, setTxns, disIds, setDisIds,
+    ready, loadDemo, syncStatus, syncError,
+  }
 }

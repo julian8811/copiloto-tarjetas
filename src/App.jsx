@@ -1912,12 +1912,35 @@ function AlertsScreen({alerts,setAlerts,setScreen}){
 }
 
 /* ══════════════════════════════════════════════════════════
+   SYNC BADGE
+══════════════════════════════════════════════════════════ */
+function SyncBadge({ status, error, visible }) {
+  if (!visible) return null;
+  const styles = {
+    syncing: { text: "Sincronizando…", cl: "var(--or)", bg: "var(--orb)" },
+    synced: { text: "● Nube", cl: "var(--gn)", bg: "var(--gnb)" },
+    error: { text: "Error sync", cl: "var(--rd)", bg: "var(--rdb)" },
+  };
+  const m = styles[status];
+  if (!m) return null;
+  return (
+    <span title={error || m.text} className="pill" style={{ fontSize: 9, color: m.cl, background: m.bg, border: `1px solid ${m.cl}44`, cursor: error ? "help" : "default" }}>
+      {m.text}
+    </span>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
    ROOT
 ══════════════════════════════════════════════════════════ */
 export default function App(){
-  const { user, ready: authReady, signIn, signUp, signOut, supabaseEnabled } = useAuth();
+  const {
+    user, ready: authReady, signIn, signUp, signOut,
+    resetPassword, updatePassword, recoveryMode, clearRecoveryMode,
+    supabaseEnabled,
+  } = useAuth();
   const [guestMode, setGuestMode] = useState(() => localStorage.getItem("cfv6_guest") === "1");
-  const { cards, setCards, txns, setTxns, disIds, setDisIds, ready: dataReady, loadDemo } = useDataStore(user);
+  const { cards, setCards, txns, setTxns, disIds, setDisIds, ready: dataReady, loadDemo, syncStatus, syncError } = useDataStore(user);
   const[screen,setScreen]=useState("home");
   const[toastD,setToastD]=useState(null);
   const toast=(msg,type="success")=>setToastD({msg,type});
@@ -1939,9 +1962,17 @@ export default function App(){
   const handleSkipAuth=()=>{localStorage.setItem("cfv6_guest","1");setGuestMode(true);};
   const handleLoadDemo=async()=>{await loadDemo();toast("✓ Datos de demostración cargados");};
 
-  const showAuth=supabaseEnabled&&!user&&!guestMode;
+  useEffect(()=>{
+    if(user){
+      localStorage.removeItem("cfv6_guest");
+      setGuestMode(false);
+    }
+  },[user]);
 
-  if(!authReady||(!showAuth&&!dataReady)) return(
+  const showAuth=supabaseEnabled&&!user&&!guestMode;
+  const showRecovery=recoveryMode&&!!user;
+
+  if(!authReady||(!showAuth&&!showRecovery&&!dataReady)) return(
     <>
       <style>{CSS}</style>
       <div className="app" style={{alignItems:"center",justifyContent:"center"}}>
@@ -1953,13 +1984,22 @@ export default function App(){
     </>
   );
 
-  if(showAuth) return(
+  if(showAuth||showRecovery) return(
     <>
       <style>{CSS}</style>
       <div className="app">
         <div className="main-col">
           <div className="auth-inner">
-            <AuthScreen signIn={signIn} signUp={signUp} supabaseEnabled={supabaseEnabled} onSkip={handleSkipAuth}/>
+            <AuthScreen
+              signIn={signIn}
+              signUp={signUp}
+              resetPassword={resetPassword}
+              updatePassword={updatePassword}
+              recoveryMode={showRecovery}
+              clearRecoveryMode={clearRecoveryMode}
+              supabaseEnabled={supabaseEnabled}
+              onSkip={handleSkipAuth}
+            />
           </div>
         </div>
       </div>
@@ -2004,6 +2044,7 @@ export default function App(){
             </div>
           </div>
           <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            <SyncBadge status={syncStatus} error={syncError} visible={!!user&&supabaseEnabled}/>
             <span style={{fontFamily:"var(--mo)",fontSize:10,fontWeight:700,color:"var(--m)"}}>{time}</span>
             {user&&<button className="btn bg" style={{fontSize:9,padding:"4px 8px"}} onClick={signOut}>Salir</button>}
           </div>
