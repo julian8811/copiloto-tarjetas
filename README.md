@@ -57,13 +57,19 @@ export VERCEL_TOKEN=tu_token
 npx vercel --prod --scope montoya8811-1146s-projects
 ```
 
-## Supabase (opcional)
+## Supabase (auth + sync en la nube)
 
-Para autenticación y sincronización multi-dispositivo:
+Proyecto: [copiloto-tarjetas](https://supabase.com/dashboard/project/caadtmygepizfmrbbsho) (`caadtmygepizfmrbbsho`)
 
-1. Crea un proyecto en [supabase.com](https://supabase.com)
-2. Ejecuta la migración en `supabase/migrations/001_initial_schema.sql`
-3. Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`
+1. La migración `supabase/migrations/001_initial_schema.sql` ya está aplicada (tablas `profiles`, `cards`, `transactions`, `dismissed_alerts` + RLS).
+2. En producción (Vercel) están configuradas `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
+3. Auth con email/contraseña; confirmación de email desactivada para registro inmediato.
+4. Para desarrollo local, copia las keys del dashboard a `.env.local`.
+
+```bash
+npx supabase link --project-ref caadtmygepizfmrbbsho
+npx supabase db push   # aplicar nuevas migraciones
+```
 
 ## GitHub Pages (subpath)
 

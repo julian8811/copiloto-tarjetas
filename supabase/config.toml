@@ -1,0 +1,7 @@
+# Copiloto Tarjetas — Supabase local/CLI config
+# Dashboard: https://supabase.com/dashboard/project/caadtmygepizfmrbbsho
+
+project_id = "caadtmygepizfmrbbsho"
+
+[db]
+major_version = 17

@@ -1,1 +1,16 @@
-{"projectId":"prj_UKTAWpHJAtoEeXhpWJ7N3ce3XIUN","orgId":"team_fcYDzz8xwUao0Tg7K8M0SMhi","projectName":"copiloto-tarjetas"}
+{
+  "projectId": "prj_UKTAWpHJAtoEeXhpWJ7N3ce3XIUN",
+  "orgId": "team_fcYDzz8xwUao0Tg7K8M0SMhi",
+  "projectName": "copiloto-tarjetas",
+  "settings": {
+    "createdAt": 1781809600694,
+    "framework": "vite",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "24.x"
+  }
+}

@@ -2,6 +2,8 @@ node_modules
 dist
 .env
 .env.local
+.env.vercel
 .cursor/mcp.json
 .vercel/*
 !.vercel/project.json
+supabase/.temp
