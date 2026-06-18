@@ -3,28 +3,57 @@ import { supabase } from '../lib/supabase.js'
 import { SEED } from '../data/seed.js'
 import { mergeById, mergeDismissed, idsRemoved, snapshotIds } from '../lib/sync.js'
 
+const ARRAY_KEYS = new Set(['cfv6_cards', 'cfv6_txns', 'cfv6_dis'])
+
+function asArray(value, fallback = []) {
+  return Array.isArray(value) ? value : fallback
+}
+
+function readLocalArray(key) {
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return []
+    return asArray(JSON.parse(raw))
+  } catch {
+    return []
+  }
+}
+
 function useLocalStore(key, init) {
-  const [val, set] = useState(init)
+  const isArrayKey = ARRAY_KEYS.has(key)
+  const [val, set] = useState(() => (isArrayKey ? asArray(init) : init))
+  const valRef = useRef(val)
   const [rdy, setRdy] = useState(false)
+
+  useEffect(() => {
+    valRef.current = val
+  }, [val])
 
   useEffect(() => {
     ;(async () => {
       try {
         const r = await window.storage.get(key)
-        if (r?.value) set(JSON.parse(r.value))
+        if (r?.value) {
+          const parsed = JSON.parse(r.value)
+          const next = isArrayKey ? asArray(parsed, []) : parsed
+          valRef.current = next
+          set(next)
+        }
       } catch {}
       setRdy(true)
     })()
-  }, [key])
+  }, [key, isArrayKey])
 
   const save = useCallback(async (v) => {
-    const nv = typeof v === 'function' ? v(val) : v
+    const nvRaw = typeof v === 'function' ? v(valRef.current) : v
+    const nv = isArrayKey ? asArray(nvRaw, []) : nvRaw
+    valRef.current = nv
     set(nv)
     try {
       await window.storage.set(key, JSON.stringify(nv))
     } catch {}
     return nv
-  }, [key, val])
+  }, [key, isArrayKey])
 
   return [val, save, rdy]
 }
@@ -53,11 +82,11 @@ function cardFromDb(r) {
     franchise: r.franchise,
     name: r.name,
     last4: r.last4,
-    limit: Number(r.limit_amount),
-    theme: r.theme,
-    cutDay: r.cut_day,
-    payDay: r.pay_day,
-    holder: r.holder,
+    limit: Number(r.limit_amount) || 0,
+    theme: r.theme || 'teal',
+    cutDay: r.cut_day ?? 22,
+    payDay: r.pay_day ?? 7,
+    holder: r.holder || '',
     updatedAt: r.updated_at,
   }
 }
@@ -83,10 +112,10 @@ function txnFromDb(r) {
     cardId: r.card_id,
     name: r.name,
     cat: r.cat,
-    amount: Number(r.amount),
+    amount: Number(r.amount) || 0,
     date: r.date,
-    cuotas: r.cuotas,
-    cuotaNum: r.cuota_num,
+    cuotas: r.cuotas ?? 1,
+    cuotaNum: r.cuota_num ?? 1,
     note: r.note || '',
     updatedAt: r.created_at,
   }
@@ -175,28 +204,36 @@ export function useDataStore(user) {
   const syncingRef = useRef(false)
   const skipSyncRef = useRef(false)
   const remoteIdsRef = useRef({ cards: [], txns: [], disIds: [] })
+  const userIdRef = useRef(user?.id)
 
   const ready = cardsReady && txnsReady && disReady && cloudReady
 
   useEffect(() => {
-    if (!user || !supabase) {
+    userIdRef.current = user?.id
+  }, [user?.id])
+
+  useEffect(() => {
+    if (!user?.id || !supabase) {
       setCloudReady(true)
       setSyncStatus('idle')
+      setSyncError(null)
       return
     }
 
     let cancelled = false
+    setCloudReady(false)
     setSyncStatus('syncing')
     setSyncError(null)
 
     ;(async () => {
+      const userId = user.id
       try {
-        const remote = await loadFromSupabase(user.id)
-        if (cancelled) return
+        const remote = await loadFromSupabase(userId)
+        if (cancelled || userIdRef.current !== userId) return
 
-        const localCards = JSON.parse(localStorage.getItem('cfv6_cards') || '[]')
-        const localTxns = JSON.parse(localStorage.getItem('cfv6_txns') || '[]')
-        const localDis = JSON.parse(localStorage.getItem('cfv6_dis') || '[]')
+        const localCards = readLocalArray('cfv6_cards')
+        const localTxns = readLocalArray('cfv6_txns')
+        const localDis = readLocalArray('cfv6_dis')
         const hasLocal = localCards.length > 0 || localTxns.length > 0
         const hasRemote = remote.cards.length > 0 || remote.txns.length > 0
 
@@ -220,39 +257,47 @@ export function useDataStore(user) {
         await setTxnsLocal(mergedTxns)
         await setDisIdsLocal(mergedDis)
 
-        remoteIdsRef.current = snapshotIds(mergedCards, mergedTxns, mergedDis)
-        await syncIncrementalToSupabase(user.id, mergedCards, mergedTxns, mergedDis, remote.remoteIds)
+        if (cancelled || userIdRef.current !== userId) return
 
-        if (!cancelled) {
+        remoteIdsRef.current = snapshotIds(mergedCards, mergedTxns, mergedDis)
+        await syncIncrementalToSupabase(userId, mergedCards, mergedTxns, mergedDis, remote.remoteIds)
+
+        if (!cancelled && userIdRef.current === userId) {
           setSyncStatus('synced')
           setSyncError(null)
         }
       } catch (err) {
         console.error('Error cargando datos de Supabase:', err)
-        if (!cancelled) {
+        if (!cancelled && userIdRef.current === userId) {
           setSyncStatus('error')
           setSyncError(err.message || 'Error de sincronización')
         }
       } finally {
-        if (!cancelled) setCloudReady(true)
+        if (!cancelled && userIdRef.current === userId) {
+          setCloudReady(true)
+        }
         skipSyncRef.current = false
       }
     })()
 
     return () => { cancelled = true }
-  }, [user?.id, setCardsLocal, setTxnsLocal, setDisIdsLocal])
+  }, [user?.id])
 
   const syncToCloud = useCallback(async (nextCards, nextTxns, nextDis) => {
-    if (!user || !supabase || skipSyncRef.current || syncingRef.current) return
+    if (!user?.id || !supabase || skipSyncRef.current || syncingRef.current) return
 
     syncingRef.current = true
     setSyncStatus('syncing')
     setSyncError(null)
 
     const prevIds = remoteIdsRef.current
+    const safeCards = asArray(nextCards)
+    const safeTxns = asArray(nextTxns)
+    const safeDis = asArray(nextDis)
+
     try {
-      await syncIncrementalToSupabase(user.id, nextCards, nextTxns, nextDis, prevIds)
-      remoteIdsRef.current = snapshotIds(nextCards, nextTxns, nextDis)
+      await syncIncrementalToSupabase(user.id, safeCards, safeTxns, safeDis, prevIds)
+      remoteIdsRef.current = snapshotIds(safeCards, safeTxns, safeDis)
       setSyncStatus('synced')
     } catch (err) {
       console.error('Error sincronizando con Supabase:', err)
@@ -261,29 +306,23 @@ export function useDataStore(user) {
     } finally {
       syncingRef.current = false
     }
-  }, [user])
+  }, [user?.id])
 
   const setCards = useCallback(async (v) => {
     const next = await setCardsLocal(v)
-    const currentTxns = JSON.parse(localStorage.getItem('cfv6_txns') || '[]')
-    const currentDis = JSON.parse(localStorage.getItem('cfv6_dis') || '[]')
-    await syncToCloud(next, currentTxns, currentDis)
+    await syncToCloud(next, readLocalArray('cfv6_txns'), readLocalArray('cfv6_dis'))
     return next
   }, [setCardsLocal, syncToCloud])
 
   const setTxns = useCallback(async (v) => {
     const next = await setTxnsLocal(v)
-    const currentCards = JSON.parse(localStorage.getItem('cfv6_cards') || '[]')
-    const currentDis = JSON.parse(localStorage.getItem('cfv6_dis') || '[]')
-    await syncToCloud(currentCards, next, currentDis)
+    await syncToCloud(readLocalArray('cfv6_cards'), next, readLocalArray('cfv6_dis'))
     return next
   }, [setTxnsLocal, syncToCloud])
 
   const setDisIds = useCallback(async (v) => {
     const next = await setDisIdsLocal(v)
-    const currentCards = JSON.parse(localStorage.getItem('cfv6_cards') || '[]')
-    const currentTxns = JSON.parse(localStorage.getItem('cfv6_txns') || '[]')
-    await syncToCloud(currentCards, currentTxns, next)
+    await syncToCloud(readLocalArray('cfv6_cards'), readLocalArray('cfv6_txns'), next)
     return next
   }, [setDisIdsLocal, syncToCloud])
 
@@ -293,13 +332,21 @@ export function useDataStore(user) {
     await setCardsLocal(demoCards)
     await setTxnsLocal(SEED.txns)
     skipSyncRef.current = false
-    if (user && supabase) {
-      await syncToCloud(demoCards, SEED.txns, disIds)
+    if (user?.id && supabase) {
+      await syncToCloud(demoCards, SEED.txns, readLocalArray('cfv6_dis'))
     }
-  }, [setCardsLocal, setTxnsLocal, user, disIds, syncToCloud])
+  }, [setCardsLocal, setTxnsLocal, user?.id, syncToCloud])
 
   return {
-    cards, setCards, txns, setTxns, disIds, setDisIds,
-    ready, loadDemo, syncStatus, syncError,
+    cards: asArray(cards),
+    setCards,
+    txns: asArray(txns),
+    setTxns,
+    disIds: asArray(disIds),
+    setDisIds,
+    ready,
+    loadDemo,
+    syncStatus,
+    syncError,
   }
 }

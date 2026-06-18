@@ -2,9 +2,11 @@ import { COP, PCT, MK } from './constants.js'
 import { ML } from './ml.js'
 
 export function genAlerts(cards, txns) {
+  const safeCards = Array.isArray(cards) ? cards : []
+  const safeTxns = Array.isArray(txns) ? txns : []
   const now=new Date();const alerts=[]
-  cards.forEach(c=>{
-    const u=txns.filter(t=>t.cardId===c.id).reduce((s,t)=>s+t.amount,0)
+  safeCards.forEach(c=>{
+    const u=safeTxns.filter(t=>t.cardId===c.id).reduce((s,t)=>s+t.amount,0)
     const p=PCT(u,c.limit)
     let dp=c.payDay-now.getDate();if(dp<0)dp+=30
     let dc=c.cutDay-now.getDate();if(dc<0)dc+=30
@@ -14,9 +16,9 @@ export function genAlerts(cards, txns) {
     if(dc<=3) alerts.push({id:`cut-${c.id}`,type:"warning",icon:"✂️",title:`Corte en ${dc} días`,body:`${c.bank} ····${c.last4} cierra el día ${c.cutDay}. Acumulado: ${COP(u)}.`,dismissed:false})
   })
   const thisM=MK(now.toISOString())
-  const subs=txns.filter(t=>t.cat==="Suscripciones"&&MK(t.date)===thisM)
+  const subs=safeTxns.filter(t=>t.cat==="Suscripciones"&&MK(t.date)===thisM)
   if(subs.length>0) alerts.push({id:"subs",type:"info",icon:"📺",title:`${subs.length} suscripciones este mes`,body:`Total: ${COP(subs.reduce((s,t)=>s+t.amount,0))}. Revisa si todas son necesarias.`,dismissed:false})
-  const rMin=ML.riskMin(cards,txns)
+  const rMin=ML.riskMin(safeCards,safeTxns)
   if(rMin>65) alerts.push({id:"riskML",type:"danger",icon:"🤖",title:`ML: ${rMin}% riesgo pago mínimo`,body:"El modelo detecta alta probabilidad de que solo puedas cubrir el pago mínimo este mes.",dismissed:false})
   if(!alerts.length) alerts.push({id:"ok",type:"success",icon:"✅",title:"Finanzas en orden",body:"Todo bajo control. ¡Sigue con el buen ritmo!",dismissed:false})
   return alerts

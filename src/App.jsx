@@ -1945,8 +1945,9 @@ export default function App(){
   const[toastD,setToastD]=useState(null);
   const toast=(msg,type="success")=>setToastD({msg,type});
 
+  const safeDisIds = Array.isArray(disIds) ? disIds : [];
   const rawAlerts=useMemo(()=>genAlerts(cards,txns),[cards,txns]);
-  const alerts=rawAlerts.map(a=>({...a,dismissed:disIds.includes(a.id)}));
+  const alerts=rawAlerts.map(a=>({...a,dismissed:safeDisIds.includes(a.id)}));
   const setAlerts=fn=>{const u=fn(alerts);setDisIds(u.filter(a=>a.dismissed).map(a=>a.id));};
   const TABS=["home","cards","registrar","analytics","copiloto"];
   const activeTab=TABS.includes(screen)?screen:"home";
@@ -1967,12 +1968,13 @@ export default function App(){
       localStorage.removeItem("cfv6_guest");
       setGuestMode(false);
     }
-  },[user]);
+  },[user?.id]);
 
   const showAuth=supabaseEnabled&&!user&&!guestMode;
   const showRecovery=recoveryMode&&!!user;
+  const waitingData=!showAuth&&!showRecovery&&!dataReady;
 
-  if(!authReady||(!showAuth&&!showRecovery&&!dataReady)) return(
+  if(!authReady||waitingData) return(
     <>
       <style>{CSS}</style>
       <div className="app" style={{alignItems:"center",justifyContent:"center"}}>
