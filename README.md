@@ -12,7 +12,7 @@ App móvil de gestión de tarjetas de crédito con IA, analítica y copiloto fin
 ```bash
 npm install
 cp .env.example .env.local
-# Edita .env.local y agrega ANTHROPIC_API_KEY para el copiloto IA
+# Edita .env.local y agrega GROQ_API_KEY para el copiloto IA
 npm run dev
 ```
 
@@ -22,7 +22,7 @@ Abre http://localhost:5173
 
 | Variable | Requerida | Descripción |
 |----------|-----------|-------------|
-| `ANTHROPIC_API_KEY` | Para copiloto IA | API key de Anthropic (solo server-side) |
+| `GROQ_API_KEY` | Para copiloto IA | API key de Groq (solo server-side) |
 | `VITE_BASE_PATH` | No | `/` para Vercel, `/copiloto-tarjetas/` para GitHub Pages |
 | `VITE_SUPABASE_URL` | Para sync multi-dispositivo | URL del proyecto Supabase |
 | `VITE_SUPABASE_ANON_KEY` | Para sync multi-dispositivo | Anon key de Supabase |
@@ -40,7 +40,7 @@ npm test         # Tests unitarios
 
 1. Importa el repositorio en [vercel.com/new](https://vercel.com/new)
 2. Framework: Vite
-3. Agrega `ANTHROPIC_API_KEY` en Environment Variables
+3. Agrega `GROQ_API_KEY` en Environment Variables
 4. Deploy
 
 ## Supabase (opcional)

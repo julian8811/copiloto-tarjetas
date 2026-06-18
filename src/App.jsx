@@ -1671,7 +1671,7 @@ Responde en español, sé directo y práctico. Usa pesos colombianos (COP/$). M�
       const res=await fetch("/api/copilot",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:1000,system:ctx(),messages:[...history,{role:"user",content:msg}]})
+        body:JSON.stringify({model:"openai/gpt-oss-120b",max_tokens:1000,system:ctx(),messages:[...history,{role:"user",content:msg}]})
       });
       const data=await res.json();
       if(!res.ok){
@@ -1679,12 +1679,12 @@ Responde en español, sé directo y práctico. Usa pesos colombianos (COP/$). M�
         setMsgs(p=>[...p,{role:"ai",text:`⚠️ ${data.error||"Error del servidor (${res.status})"}`}]);
       }else{
         setApiStatus("connected");
-        const reply=data.content?.find(b=>b.type==="text")?.text||"Sin respuesta del servidor.";
+        const reply=data.reply||"Sin respuesta del servidor.";
         setMsgs(p=>[...p,{role:"ai",text:reply}]);
       }
     }catch{
       setApiStatus("error");
-      setMsgs(p=>[...p,{role:"ai",text:"⚠️ Error de conexión. Verifica tu acceso a internet y que ANTHROPIC_API_KEY esté configurada."}]);
+      setMsgs(p=>[...p,{role:"ai",text:"⚠️ Error de conexión. Verifica tu acceso a internet y que GROQ_API_KEY esté configurada."}]);
     }
     setLoading(false);
   };
