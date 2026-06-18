@@ -1,65 +1,66 @@
 #!/bin/bash
-# ============================================================
-#  SCRIPT DE DESPLIEGUE — Copiloto Tarjetas
-#  Ejecuta este script en tu computador
-# ============================================================
+# Script de despliegue — Copiloto Tarjetas
 
 set -e
 
 echo ""
-echo "🚀 Iniciando despliegue de Copiloto Tarjetas..."
+echo "Iniciando despliegue de Copiloto Tarjetas..."
 echo ""
 
-# 1. Instalar dependencias
-echo "📦 Instalando dependencias..."
-npm install
-
-# 2. Build de producción
-echo "🔨 Construyendo app..."
-npm run build
-
-# 3. Inicializar git si no existe
-if [ ! -d ".git" ]; then
-  git init
-  git branch -M main
+if [ -z "$GITHUB_TOKEN" ]; then
+  echo "Error: define GITHUB_TOKEN como variable de entorno"
+  exit 1
 fi
 
-# 4. Configurar git
-git config user.email "julian@copilototarjetas.app"
-git config user.name "julian8811"
+if [ -z "$VERCEL_TOKEN" ]; then
+  echo "Error: define VERCEL_TOKEN como variable de entorno"
+  exit 1
+fi
 
-# 5. Commit
+echo "Instalando dependencias..."
+npm ci
+
+echo "Ejecutando tests..."
+npm test
+
+echo "Construyendo app..."
+npm run build
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ ! -d ".git" ]; then
+  git init
+fi
+
+git config user.email "${GIT_USER_EMAIL:-deploy@copilototarjetas.app}"
+git config user.name "${GIT_USER_NAME:-copiloto-deploy}"
+
 git add -A
-git commit -m "🚀 Copiloto Tarjetas v6 - Deploy inicial" 2>/dev/null || echo "Sin cambios nuevos"
+git commit -m "Deploy Copiloto Tarjetas" 2>/dev/null || echo "Sin cambios nuevos"
 
-# 6. Conectar con GitHub (crea el repo si no existe)
-echo ""
-echo "📡 Conectando con GitHub..."
-GITHUB_USER="julian8811"
-REPO_NAME="copiloto-tarjetas"
+GITHUB_USER="${GITHUB_USER:-julian8811}"
+REPO_NAME="${REPO_NAME:-copiloto-tarjetas}"
 
-# Crear repo en GitHub via API
 curl -s -X POST \
   -H "Authorization: token $GITHUB_TOKEN" \
   -H "Content-Type: application/json" \
-  https://api.github.com/user/repos \
+  "https://api.github.com/user/repos" \
   -d "{\"name\":\"$REPO_NAME\",\"private\":false,\"description\":\"Copiloto Inteligente de Tarjetas de Crédito\"}" \
   > /dev/null 2>&1 || true
 
-# Push a GitHub
 git remote remove origin 2>/dev/null || true
-git remote add origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/$REPO_NAME.git
-git push -u origin main --force
+git remote add origin "https://github.com/$GITHUB_USER/$REPO_NAME.git"
 
-echo "✅ Código en GitHub: https://github.com/$GITHUB_USER/$REPO_NAME"
+echo "Subiendo a GitHub (rama $BRANCH)..."
+git push -u origin "$BRANCH"
+
+echo "Código en GitHub: https://github.com/$GITHUB_USER/$REPO_NAME"
 echo ""
 
-# 7. Deploy en Vercel
-echo "▲ Desplegando en Vercel..."
+echo "Desplegando en Vercel..."
 npx vercel --prod --yes \
-  --token $VERCEL_TOKEN \
-  --scope montoya8811-1146
+  --token "$VERCEL_TOKEN" \
+  --scope "${VERCEL_SCOPE:-montoya8811-1146}"
 
 echo ""
-echo "✅ ¡DESPLIEGUE COMPLETADO!"
-echo ""
+echo "Despliegue completado."
