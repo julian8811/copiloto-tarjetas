@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Expense Registration - Copiloto IA</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#ffb689",
+                        "inverse-primary": "#006b57",
+                        "surface-container": "#182029",
+                        "secondary-fixed": "#ffdbc7",
+                        "on-background": "#dbe3f0",
+                        "inverse-on-surface": "#29313a",
+                        "text-primary": "#F0F4FC",
+                        "on-secondary": "#512300",
+                        "primary-fixed-dim": "#00e0b7",
+                        "text-secondary": "#8A99AF",
+                        "primary": "#fffffd",
+                        "surface-bright": "#313a44",
+                        "primary-container": "#00ffd1",
+                        "on-tertiary-fixed-variant": "#920027",
+                        "surface-variant": "#2d363f",
+                        "tertiary-fixed-dim": "#ffb3b5",
+                        "tertiary": "#fffeff",
+                        "on-secondary-fixed-variant": "#733500",
+                        "on-secondary-container": "#fff7f3",
+                        "secondary": "#ffb689",
+                        "on-tertiary-fixed": "#40000c",
+                        "error": "#ffb4ab",
+                        "surface-overlay": "#161F2E",
+                        "error-container": "#93000a",
+                        "on-primary-fixed-variant": "#005141",
+                        "surface-container-highest": "#2d363f",
+                        "surface-container-high": "#222b34",
+                        "surface-tint": "#00e0b7",
+                        "secondary-container": "#b55801",
+                        "surface": "#0b141d",
+                        "on-primary-fixed": "#002019",
+                        "surface-card": "#0B121E",
+                        "background": "#0b141d",
+                        "on-secondary-fixed": "#311300",
+                        "on-primary-container": "#00725c",
+                        "status-gold": "#FFD700",
+                        "on-tertiary": "#680019",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-container": "#ffd9da",
+                        "surface-container-low": "#141c25",
+                        "surface-dim": "#0b141d",
+                        "outline-variant": "#3a4a44",
+                        "on-error": "#690005",
+                        "primary-fixed": "#15ffd1",
+                        "on-primary": "#00382c",
+                        "outline": "#83958d",
+                        "tertiary-fixed": "#ffdada",
+                        "on-surface-variant": "#b9cbc3",
+                        "surface-container-lowest": "#070f17",
+                        "inverse-surface": "#dbe3f0",
+                        "on-tertiary-container": "#c5133c",
+                        "on-surface": "#dbe3f0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "unit": "8px",
+                        "margin-desktop": "48px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "label-mono": ["Space Mono"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "display-lg-mobile": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "label-mono": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["11px", { "lineHeight": "12px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .neon-glow {
+            box-shadow: 0px 0px 12px rgba(0, 255, 209, 0.3);
+        }
+        .neon-glow-hover:hover {
+            box-shadow: 0px 0px 16px rgba(0, 255, 209, 0.5);
+        }
+        .drag-active {
+            border-color: #00ffd1 !important;
+            background-color: rgba(0, 255, 209, 0.05) !important;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen overflow-hidden flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar (Predicted Component) -->
+<nav class="h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-surface flex flex-col h-full p-unit border-r border-outline-variant z-40 hidden md:flex">
+<!-- Header -->
+<div class="p-4 mb-6">
+<h1 class="font-display-lg text-display-lg text-primary-fixed-dim tracking-tight text-2xl font-bold mb-1">Copiloto IA</h1>
+<p class="font-label-caps text-label-caps text-text-secondary uppercase">Wealth Management</p>
+</div>
+<!-- Main Tabs -->
+<div class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary transition-colors hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary transition-colors hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="credit_card">credit_card</span>
+<span class="font-label-caps text-label-caps">Cards</span>
+</a>
+<!-- Active State: Transactions maps logically to Expense Registration -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container bg-primary-container rounded-lg shadow-[0px_0px_12px_rgba(0,255,209,0.3)] transition-all scale-[0.98]" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-caps text-label-caps">Transactions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary transition-colors hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="font-label-caps text-label-caps">Analysis</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary transition-colors hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+<span class="font-label-caps text-label-caps">AI Copilot</span>
+</a>
+</div>
+<!-- Footer -->
+<div class="mt-auto pt-4 border-t border-outline-variant space-y-1">
+<button class="w-full mb-4 py-3 px-4 bg-primary-container text-on-primary-container font-label-caps text-label-caps rounded-lg neon-glow neon-glow-hover transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="star">star</span>
+                Upgrade to Pro
+            </button>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary transition-colors hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary transition-colors hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-caps text-label-caps">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-64 flex flex-col h-screen overflow-hidden bg-background">
+<!-- TopNavBar (Predicted Component) -->
+<header class="docked full-width top-0 sticky bg-background/80 dark:bg-background/80 backdrop-blur-md flex justify-between items-center w-full px-margin-desktop py-4 z-30">
+<!-- Mobile Brand (hidden on md+) -->
+<h1 class="md:hidden font-headline-md text-headline-md text-text-primary font-bold">Copiloto IA</h1>
+<!-- Search / Breadcrumbs area -->
+<div class="hidden md:flex items-center gap-2 text-text-secondary">
+<span class="font-label-caps text-label-caps">Transactions</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+<span class="font-label-caps text-label-caps text-primary-fixed-dim">Register Expense</span>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="text-text-secondary hover:text-text-primary hover:bg-surface-overlay dark:hover:bg-surface-overlay rounded-full p-2 transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-text-secondary hover:text-text-primary hover:bg-surface-overlay dark:hover:bg-surface-overlay rounded-full p-2 transition-all">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant ml-2">
+<img class="w-full h-full object-cover" data-alt="A stylized, neon-lit digital avatar of a financial assistant in dark mode, reflecting the corporate modern vaporwave aesthetic. Deep blacks with bright teal accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzkFpAkq2DvdOGxgSKO8oH-uH4A6E6ol6JnYSclD5FHngCT-rX0p6piTVPvttY5R6rgOEkgm25ZcY9r1Pgp9zjnzme1fSV1I__0FeRYfJ3KMOlE44l3wQ4FTN34A0vElySda-dBfX9anMYMvbvI8jLwqfA5eg1mFKE46GPBk8F2vgeWBv7hmQN4rx34y7-zJh9124ulK99sH6tVPSSPHZFZr_d0-YR6m9VHo3euS3wglbRvCO1FxOQcCkhacbo-e5bgrH-n6qODuA"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 overflow-y-auto p-gutter md:p-margin-desktop relative">
+<!-- Reference Image Context (Hidden visually but included per requirement) -->
+<div class="hidden" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDbUrtxDPAdU9jCoLl1JrQxy4hm0-O1mKHFxR5j_SjQ7R1Ntn2YypRdcIDwQc5gNvB3xmlMZP_1EG82f6exRjO5CWMKYTaqxKGT0zACs6wkJeowf2C2ROvZAZZT8RG-8XVYqi4x1qi4ICPJ4ahwRETIlkHBCX2WnilR0d_LYyYt_QTGoPqCeDIMC3zAtKB4Qq_jYrZmGF96zK5BFXsM3hEIg0s65jdDgSFg3fIHWKLs5OR6vT-L5i4sY-f199Z3O8z26KqPaVQtvmo')"></div>
+<div class="max-w-container-max mx-auto h-full flex flex-col">
+<div class="mb-8">
+<h2 class="font-display-lg text-display-lg text-text-primary mb-2">Register Expense</h2>
+<p class="font-body-lg text-body-lg text-text-secondary">Import your financial data or enter a record manually.</p>
+</div>
+<!-- Main Layout Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter flex-1">
+<!-- Left Column: Primary Actions -->
+<div class="lg:col-span-8 flex flex-col gap-gutter">
+<!-- Drag & Drop Zone -->
+<div class="bg-surface-card rounded-xl p-8 border-2 border-dashed border-outline-variant flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-primary-fixed-dim hover:bg-surface-overlay cursor-pointer group min-h-[320px]" id="dropzone">
+<div class="w-20 h-20 rounded-full bg-surface-overlay flex items-center justify-center mb-6 group-hover:neon-glow transition-all">
+<span class="material-symbols-outlined text-4xl text-primary-fixed-dim" data-icon="cloud_upload">cloud_upload</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-text-primary mb-2">Drag &amp; Drop Files Here</h3>
+<p class="font-body-md text-body-md text-text-secondary mb-6 max-w-md">
+                                Upload Excel, CSV, PDF, or raw text files. The AI Copilot will automatically extract and categorize transactions.
+                            </p>
+<div class="flex items-center gap-4">
+<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-label-caps text-label-caps uppercase tracking-wider neon-glow hover:neon-glow-hover transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="folder_open">folder_open</span>
+                                    Browse Files
+                                </button>
+<span class="text-text-secondary font-label-mono text-label-mono uppercase">Max 50MB</span>
+</div>
+<!-- Supported Formats Pills -->
+<div class="flex gap-2 mt-8">
+<span class="bg-surface px-3 py-1 rounded-full font-label-mono text-label-mono text-text-secondary border border-outline-variant">.XLSX</span>
+<span class="bg-surface px-3 py-1 rounded-full font-label-mono text-label-mono text-text-secondary border border-outline-variant">.CSV</span>
+<span class="bg-surface px-3 py-1 rounded-full font-label-mono text-label-mono text-text-secondary border border-outline-variant">.PDF</span>
+<span class="bg-surface px-3 py-1 rounded-full font-label-mono text-label-mono text-text-secondary border border-outline-variant">.TXT</span>
+</div>
+</div>
+<!-- OR Divider -->
+<div class="flex items-center gap-4 py-4">
+<div class="flex-1 h-px bg-outline-variant"></div>
+<span class="font-label-mono text-label-mono text-text-secondary uppercase">Or</span>
+<div class="flex-1 h-px bg-outline-variant"></div>
+</div>
+<!-- Manual Entry Card -->
+<div class="bg-surface-card rounded-xl p-6 lg:p-8">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md text-text-primary flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary-fixed-dim" data-icon="edit_document">edit_document</span>
+                                    Manual Entry
+                                </h3>
+</div>
+<form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Amount -->
+<div class="col-span-1 md:col-span-2">
+<label class="block font-label-caps text-label-caps text-text-secondary mb-2 uppercase">Amount</label>
+<div class="relative group">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-primary-fixed-dim font-label-mono text-lg">$</span>
+<input class="w-full bg-surface-overlay border-b-2 border-outline-variant focus:border-primary-container border-x-0 border-t-0 px-8 py-3 font-label-mono text-text-primary text-xl focus:ring-0 transition-colors bg-transparent placeholder-outline-variant" placeholder="0.00" type="text"/>
+</div>
+</div>
+<!-- Date -->
+<div class="col-span-1">
+<label class="block font-label-caps text-label-caps text-text-secondary mb-2 uppercase">Date</label>
+<div class="relative">
+<input class="w-full bg-surface-overlay border border-outline-variant focus:border-primary-container rounded-lg px-4 py-3 font-body-md text-text-primary focus:ring-1 focus:ring-primary-container transition-colors [color-scheme:dark]" type="date"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" data-icon="calendar_today">calendar_today</span>
+</div>
+</div>
+<!-- Category -->
+<div class="col-span-1">
+<label class="block font-label-caps text-label-caps text-text-secondary mb-2 uppercase">Category</label>
+<div class="relative">
+<select class="w-full bg-surface-overlay border border-outline-variant focus:border-primary-container rounded-lg px-4 py-3 font-body-md text-text-primary focus:ring-1 focus:ring-primary-container transition-colors appearance-none cursor-pointer">
+<option disabled="" selected="" value="">Select category...</option>
+<option value="software">Software &amp; Subscriptions</option>
+<option value="travel">Travel &amp; Transit</option>
+<option value="office">Office Supplies</option>
+<option value="meals">Meals &amp; Entertainment</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Description -->
+<div class="col-span-1 md:col-span-2">
+<label class="block font-label-caps text-label-caps text-text-secondary mb-2 uppercase">Description</label>
+<input class="w-full bg-surface-overlay border border-outline-variant focus:border-primary-container rounded-lg px-4 py-3 font-body-md text-text-primary focus:ring-1 focus:ring-primary-container transition-colors placeholder-text-secondary/50" placeholder="e.g., Monthly AWS Hosting" type="text"/>
+</div>
+<div class="col-span-1 md:col-span-2 flex justify-end mt-4">
+<button class="border border-primary-fixed-dim text-primary-fixed-dim px-6 py-2 rounded-lg font-label-caps text-label-caps uppercase tracking-wider hover:bg-primary-fixed-dim/10 transition-all" type="button">
+                                        Add Record
+                                    </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Right Column: Info & Guidance -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- AI Processing Info -->
+<div class="bg-surface-overlay rounded-xl p-6 relative overflow-hidden border border-outline-variant">
+<!-- Decorative blur -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-primary-container/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex items-start gap-4 mb-4">
+<div class="p-2 bg-surface rounded-lg">
+<span class="material-symbols-outlined text-primary-fixed-dim" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div>
+<h4 class="font-body-md text-text-primary font-bold mb-1">Copilot Extraction</h4>
+<p class="font-body-md text-body-md text-text-secondary text-sm">Our AI automatically detects dates, amounts, vendors, and categorizes expenses from unstructured files.</p>
+</div>
+</div>
+</div>
+<!-- Data Structure Guide -->
+<div class="bg-surface-card rounded-xl p-6 border border-outline-variant flex-1">
+<h4 class="font-label-caps text-label-caps text-text-secondary uppercase mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="info">info</span>
+                                Recommended Structure
+                            </h4>
+<p class="font-body-md text-body-md text-text-secondary text-sm mb-6">For fastest CSV/Excel processing, ensure your columns match these headers:</p>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg border border-outline-variant/50">
+<span class="font-label-mono text-label-mono text-text-primary">Date</span>
+<span class="font-label-mono text-[10px] text-text-secondary">YYYY-MM-DD</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg border border-outline-variant/50">
+<span class="font-label-mono text-label-mono text-text-primary">Amount</span>
+<span class="font-label-mono text-[10px] text-text-secondary">Numeric</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg border border-outline-variant/50">
+<span class="font-label-mono text-label-mono text-text-primary">Vendor</span>
+<span class="font-label-mono text-[10px] text-text-secondary">Text</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg border border-outline-variant/50 opacity-70">
+<span class="font-label-mono text-label-mono text-text-primary">Category</span>
+<span class="font-label-mono text-[10px] text-text-secondary">Optional</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface rounded-lg border border-outline-variant/50 opacity-70">
+<span class="font-label-mono text-label-mono text-text-primary">Notes</span>
+<span class="font-label-mono text-[10px] text-text-secondary">Optional</span>
+</div>
+</div>
+<a class="inline-flex items-center gap-2 text-primary-fixed-dim font-body-md text-sm mt-6 hover:underline" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                                Download Template
+                            </a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple drag and drop visual feedback
+        const dropzone = document.getElementById('dropzone');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropzone.classList.add('drag-active');
+        }
+
+        function unhighlight(e) {
+            dropzone.classList.remove('drag-active');
+        }
+    </script>
+</body></html>

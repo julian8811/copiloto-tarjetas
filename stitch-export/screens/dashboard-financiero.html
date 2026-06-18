@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Copiloto IA - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#ffb689",
+                        "inverse-primary": "#006b57",
+                        "surface-container": "#182029",
+                        "secondary-fixed": "#ffdbc7",
+                        "on-background": "#dbe3f0",
+                        "inverse-on-surface": "#29313a",
+                        "text-primary": "#F0F4FC",
+                        "on-secondary": "#512300",
+                        "primary-fixed-dim": "#00e0b7",
+                        "text-secondary": "#8A99AF",
+                        "primary": "#fffffd",
+                        "surface-bright": "#313a44",
+                        "primary-container": "#00ffd1",
+                        "on-tertiary-fixed-variant": "#920027",
+                        "surface-variant": "#2d363f",
+                        "tertiary-fixed-dim": "#ffb3b5",
+                        "tertiary": "#fffeff",
+                        "on-secondary-fixed-variant": "#733500",
+                        "on-secondary-container": "#fff7f3",
+                        "secondary": "#ffb689",
+                        "on-tertiary-fixed": "#40000c",
+                        "error": "#ffb4ab",
+                        "surface-overlay": "#161F2E",
+                        "error-container": "#93000a",
+                        "on-primary-fixed-variant": "#005141",
+                        "surface-container-highest": "#2d363f",
+                        "surface-container-high": "#222b34",
+                        "surface-tint": "#00e0b7",
+                        "secondary-container": "#b55801",
+                        "surface": "#0b141d",
+                        "on-primary-fixed": "#002019",
+                        "surface-card": "#0B121E",
+                        "background": "#0b141d",
+                        "on-secondary-fixed": "#311300",
+                        "on-primary-container": "#00725c",
+                        "status-gold": "#FFD700",
+                        "on-tertiary": "#680019",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-container": "#ffd9da",
+                        "surface-container-low": "#141c25",
+                        "surface-dim": "#0b141d",
+                        "outline-variant": "#3a4a44",
+                        "on-error": "#690005",
+                        "primary-fixed": "#15ffd1",
+                        "on-primary": "#00382c",
+                        "outline": "#83958d",
+                        "tertiary-fixed": "#ffdada",
+                        "on-surface-variant": "#b9cbc3",
+                        "surface-container-lowest": "#070f17",
+                        "inverse-surface": "#dbe3f0",
+                        "on-tertiary-container": "#c5133c",
+                        "on-surface": "#dbe3f0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "unit": "8px",
+                        "margin-desktop": "48px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "label-mono": ["Space Mono"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "display-lg-mobile": ["Plus Jakarta Sans"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "label-mono": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["11px", { "lineHeight": "12px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #020810; /* Base level 0 as per guidance */
+            color: #F0F4FC;
+        }
+        .glass-panel {
+            background: rgba(11, 18, 30, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(58, 74, 68, 0.3);
+        }
+        .neon-glow {
+            box-shadow: 0px 0px 12px rgba(0, 255, 209, 0.3);
+        }
+        .text-neon {
+            text-shadow: 0 0 8px rgba(0, 255, 209, 0.5);
+        }
+        
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(11, 20, 29, 0.5); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d363f; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3a4a44; 
+        }
+    </style>
+</head>
+<body class="font-body-md text-text-primary antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar (Shared Component JSON) -->
+<nav class="bg-surface dark:bg-surface h-screen w-64 fixed left-0 top-0 flex flex-col h-full p-unit border-r border-outline-variant bg-surface-container-low dark:bg-surface-container-low hidden md:flex z-50">
+<!-- Header -->
+<div class="px-4 py-6 mb-4 flex items-center gap-3 border-b border-outline-variant/30 pb-6">
+<img alt="Logo Copiloto IA" class="w-10 h-10 rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvysDpTG4D4Z5RIM-J3U9OQBVjvvUcNzCpgMo1GdciRptCY4lvzdC_XLzM5AKgR8YcD5z_ibHUBAmCm29gGsjvmKRbNu2laTAhYy0wJVexAXSRODFv_GXPE5Gd67x5vBjalvSGQuJTuSDN_ImJ3EnhRUiV9QWkOgIfgtS6zgbM5AbtfTeZkfi9oQGtp_jszZOWcTqr_dkzfv0X6u1-QYnPn3BRkGZB0R82Lk1BjLV5TZfDzCSv7lBjG5DvQ-9DFlxuihOb36NeAqw"/>
+<div>
+<h1 class="font-display-lg text-display-lg text-primary-fixed-dim tracking-tight text-xl mb-0">Copiloto IA</h1>
+<p class="font-label-caps text-label-caps text-text-secondary">Wealth Management</p>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<div class="flex-1 overflow-y-auto py-2 space-y-1">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container bg-primary-container rounded-lg shadow-[0px_0px_12px_rgba(0,255,209,0.3)] transition-all font-label-caps text-label-caps scale-[0.98] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary transition-colors hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">credit_card</span>
+<span>Cards</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary transition-colors hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span>Transactions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary transition-colors hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span>Analysis</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary transition-colors hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span>AI Copilot</span>
+</a>
+</div>
+<!-- Upgrade CTA -->
+<div class="px-4 py-4 mt-auto">
+<button class="w-full bg-surface-overlay border border-primary-fixed-dim/30 text-primary-fixed-dim rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:bg-primary-fixed-dim/10 transition-colors font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[18px]">workspace_premium</span>
+                Upgrade to Pro
+            </button>
+</div>
+<!-- Footer Tabs -->
+<div class="mt-2 border-t border-outline-variant/30 pt-2 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary transition-colors hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary transition-colors hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<main class="flex-1 md:ml-64 flex flex-col min-h-screen w-full">
+<!-- TopNavBar (Shared Component JSON) -->
+<header class="bg-background/80 dark:bg-background/80 backdrop-blur-md docked full-width top-0 sticky bg-transparent flex justify-between items-center w-full px-margin-desktop py-4 z-40 border-b border-outline-variant/20">
+<!-- Mobile Menu & Title -->
+<div class="flex items-center gap-4 md:hidden">
+<button class="text-text-primary p-2 rounded-lg hover:bg-surface-overlay transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="font-headline-md text-headline-md text-text-primary">Copiloto IA</span>
+</div>
+<!-- Search Bar (on_left logic, hidden on mobile for cleaner top nav, desktop visible) -->
+<div class="hidden md:flex items-center relative w-96 focus-within:ring-2 focus-within:ring-primary-container rounded-lg transition-all">
+<span class="material-symbols-outlined absolute left-3 text-text-secondary">search</span>
+<input class="w-full bg-surface-overlay border-none text-text-primary font-label-mono text-label-mono py-2.5 pl-10 pr-4 rounded-lg focus:ring-0 focus:outline-none placeholder:text-text-secondary/50" placeholder="Search transactions, insights..." type="text"/>
+</div>
+<!-- Trailing Icons & Profile -->
+<div class="flex items-center gap-2 md:gap-4 ml-auto">
+<button class="text-text-secondary hover:text-text-primary hover:bg-surface-overlay dark:hover:bg-surface-overlay rounded-full p-2 transition-all relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary-fixed-dim rounded-full neon-glow"></span>
+</button>
+<button class="text-text-secondary hover:text-text-primary hover:bg-surface-overlay dark:hover:bg-surface-overlay rounded-full p-2 transition-all hidden sm:block">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-px bg-outline-variant/50 mx-2 hidden sm:block"></div>
+<button class="flex items-center gap-2 rounded-full hover:ring-2 hover:ring-primary-container/50 transition-all p-1">
+<img alt="User profile" class="w-8 h-8 rounded-full object-cover border border-outline-variant" data-alt="A stylized, high-contrast corporate avatar placeholder. Dark navy background with a subtle, glowing teal neon outline. Minimalist profile silhouette. High-tech, financial executive aesthetic, sleek and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUeJuPq6ON5gGRFq9mMQZwySgKo5MpzgMLmhcV9W9oEZlkeftjEDxbwrzWW_Di4eYgPYIqiEfYE_wUGSMsp5fLInEeyJOSnVWm32ceZuHnv4Sq9fHaENRMcbNcKpPDhoWlcLKFOv1dsxKFysgIRJeP8KXyZb77Dx0dXn9whtciN0FRS1VOIjRcgWEevkeNOTmrPys8jHdt2KZ63IGkx_TawitOP-BDx2M54yQqpJ_1VaKtLWSOUL8ghFkTapD_m9I8OhOLQrl-Zlo"/>
+</button>
+</div>
+</header>
+<!-- Dashboard Content Canvas -->
+<div class="flex-1 p-margin-mobile md:p-margin-desktop overflow-y-auto">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+<div>
+<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-text-primary tracking-tight">Overview</h2>
+<p class="font-body-md text-body-md text-text-secondary mt-1">Your financial pulse at a glance.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-surface-overlay text-text-primary border border-outline-variant px-4 py-2 rounded-lg font-label-caps text-label-caps flex items-center gap-2 hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                        This Month
+                        <span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+</button>
+<button class="bg-primary-container text-on-primary-container px-4 py-2 rounded-lg font-label-caps text-label-caps flex items-center gap-2 hover:bg-primary-fixed hover:neon-glow transition-all">
+<span class="material-symbols-outlined text-[16px]">add</span>
+                        New Action
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- KPI 1: Total Debt (Prominent) -->
+<div class="col-span-1 md:col-span-4 bg-surface-card rounded-xl p-6 border border-outline-variant/20 relative overflow-hidden group">
+<!-- Decorative Gradient -->
+<div class="absolute -right-10 -top-10 w-32 h-32 bg-error/10 rounded-full blur-3xl group-hover:bg-error/20 transition-all duration-500"></div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-caps text-label-caps text-text-secondary flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-error">account_balance</span>
+                            TOTAL DEBT
+                        </span>
+<span class="bg-surface-overlay px-2 py-1 rounded-md font-label-mono text-label-mono text-error flex items-center gap-1 border border-error/20">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                            +2.4%
+                        </span>
+</div>
+<div class="font-display-lg text-display-lg-mobile md:text-display-lg text-text-primary">$9.4M</div>
+<div class="mt-4 w-full bg-surface-overlay h-1.5 rounded-full overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 75%"></div>
+</div>
+<p class="font-label-mono text-label-mono text-text-secondary mt-2">75% of credit utilization limit</p>
+</div>
+<!-- KPI 2: Monthly Spending -->
+<div class="col-span-1 md:col-span-4 bg-surface-card rounded-xl p-6 border border-outline-variant/20 relative overflow-hidden group">
+<div class="absolute -right-10 -top-10 w-32 h-32 bg-primary-fixed-dim/10 rounded-full blur-3xl group-hover:bg-primary-fixed-dim/20 transition-all duration-500"></div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-caps text-label-caps text-text-secondary flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed-dim">payments</span>
+                            MONTHLY SPEND
+                        </span>
+<span class="bg-surface-overlay px-2 py-1 rounded-md font-label-mono text-label-mono text-primary-fixed-dim flex items-center gap-1 border border-primary-fixed-dim/20">
+<span class="material-symbols-outlined text-[14px]">trending_down</span>
+                            -12%
+                        </span>
+</div>
+<div class="font-display-lg text-display-lg-mobile md:text-display-lg text-text-primary">$45.2K</div>
+<div class="mt-4 flex items-end gap-1 h-6">
+<!-- Mini bar chart -->
+<div class="w-1/6 bg-surface-overlay rounded-t-sm h-[40%]"></div>
+<div class="w-1/6 bg-surface-overlay rounded-t-sm h-[60%]"></div>
+<div class="w-1/6 bg-surface-overlay rounded-t-sm h-[30%]"></div>
+<div class="w-1/6 bg-surface-overlay rounded-t-sm h-[80%]"></div>
+<div class="w-1/6 bg-surface-overlay rounded-t-sm h-[50%]"></div>
+<div class="w-1/6 bg-primary-fixed-dim rounded-t-sm h-[70%] neon-glow"></div>
+</div>
+</div>
+<!-- KPI 3: Risk Score -->
+<div class="col-span-1 md:col-span-4 bg-surface-card rounded-xl p-6 border border-outline-variant/20 flex flex-col justify-between">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-caps text-label-caps text-text-secondary flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">security</span>
+                            RISK SCORE
+                        </span>
+<button class="text-text-secondary hover:text-text-primary">
+<span class="material-symbols-outlined text-[18px]">info</span>
+</button>
+</div>
+<div class="flex items-center gap-6 mt-2">
+<!-- Circular Progress conceptualization -->
+<div class="relative w-20 h-20 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-overlay stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path>
+<path class="text-secondary stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="85, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute flex flex-col items-center justify-center">
+<span class="font-headline-md text-headline-md text-text-primary">A-</span>
+</div>
+</div>
+<div>
+<p class="font-body-md text-body-md text-text-primary mb-1">Excellent Status</p>
+<p class="font-label-mono text-label-mono text-text-secondary">Low probability of default.</p>
+</div>
+</div>
+</div>
+<!-- Main Chart Area: Trend + ML -->
+<div class="col-span-1 md:col-span-8 bg-surface-card rounded-xl p-6 border border-outline-variant/20 flex flex-col min-h-[400px]">
+<div class="flex items-center justify-between mb-6">
+<div>
+<h3 class="font-headline-md text-headline-md text-text-primary flex items-center gap-2">
+                                Spending Trend <span class="bg-primary-container/20 text-primary-fixed-dim px-2 py-0.5 rounded text-xs font-label-caps border border-primary-container/30">ML PREDICTIVE</span>
+</h3>
+<p class="font-label-mono text-label-mono text-text-secondary mt-1">Real vs Predicted Trajectory</p>
+</div>
+<div class="flex items-center gap-2 bg-surface-overlay rounded-lg p-1 border border-outline-variant/30">
+<button class="px-3 py-1 rounded-md bg-surface-variant text-text-primary font-label-caps text-label-caps">1M</button>
+<button class="px-3 py-1 rounded-md text-text-secondary hover:text-text-primary font-label-caps text-label-caps">3M</button>
+<button class="px-3 py-1 rounded-md text-text-secondary hover:text-text-primary font-label-caps text-label-caps">YTD</button>
+</div>
+</div>
+<!-- Chart Placeholder / Visualization Area -->
+<div class="flex-1 relative w-full border-b border-l border-outline-variant/30 pb-4 pl-4 mt-4">
+<!-- Y-Axis Labels -->
+<div class="absolute left-0 top-0 h-full flex flex-col justify-between -ml-2 text-right font-label-mono text-label-mono text-text-secondary text-[10px] py-4 w-10">
+<span>$60k</span>
+<span>$40k</span>
+<span>$20k</span>
+<span>$0</span>
+</div>
+<!-- Grid Lines -->
+<div class="absolute left-4 right-0 top-4 h-[calc(100%-1rem)] flex flex-col justify-between z-0">
+<div class="w-full border-t border-outline-variant/20 border-dashed"></div>
+<div class="w-full border-t border-outline-variant/20 border-dashed"></div>
+<div class="w-full border-t border-outline-variant/20 border-dashed"></div>
+<div class="w-full border-t border-transparent"></div>
+</div>
+<!-- Conceptual Line Chart (CSS drawing) -->
+<div class="relative w-full h-full z-10 flex items-end pt-8">
+<!-- Real Data Line (Teal) -->
+<svg class="absolute inset-0 w-[70%] h-full overflow-visible" preserveaspectratio="none">
+<path d="M0,80 Q50,90 100,50 T200,60 T300,30 T400,70 T500,40" fill="none" stroke="#00e0b7" stroke-width="3" style="filter: drop-shadow(0px 4px 6px rgba(0, 224, 183, 0.4));"></path>
+<!-- Gradient fill under line -->
+<path d="M0,80 Q50,90 100,50 T200,60 T300,30 T400,70 T500,40 L500,100 L0,100 Z" fill="url(#tealGradient)" opacity="0.2"></path>
+<defs>
+<lineargradient id="tealGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#00e0b7" stop-opacity="1"></stop>
+<stop offset="100%" stop-color="#00e0b7" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+<!-- Predicted Data Line (Dashed Orange/Secondary) -->
+<svg class="absolute inset-0 w-full h-full overflow-visible" preserveaspectratio="none">
+<!-- Start from end of real data -->
+<path d="M500,40 Q550,20 600,45 T700,25" fill="none" stroke="#ffb689" stroke-dasharray="6,4" stroke-width="2"></path>
+</svg>
+<!-- Current Data Point Marker -->
+<div class="absolute w-4 h-4 bg-background border-2 border-primary-fixed-dim rounded-full neon-glow z-20" style="left: calc(70% - 8px); top: 40%;"></div>
+<!-- Tooltip -->
+<div class="absolute bg-surface-overlay border border-outline-variant rounded-lg p-3 z-30 shadow-lg glass-panel pointer-events-none" style="left: calc(70% - 60px); top: 10%;">
+<div class="font-label-caps text-label-caps text-text-secondary mb-1">CURRENT</div>
+<div class="font-label-mono text-label-mono text-primary-fixed-dim text-lg">$45.2k</div>
+</div>
+</div>
+<!-- X-Axis Labels -->
+<div class="absolute left-4 right-0 bottom-0 translate-y-6 flex justify-between font-label-mono text-label-mono text-text-secondary text-[10px]">
+<span>Jan</span>
+<span>Feb</span>
+<span>Mar</span>
+<span class="text-primary-fixed-dim font-bold">Apr (Now)</span>
+<span>May</span>
+<span>Jun</span>
+</div>
+</div>
+</div>
+<!-- Side Column Stack: Cards & Movements -->
+<div class="col-span-1 md:col-span-4 flex flex-col gap-6">
+<!-- My Cards Section -->
+<div class="bg-surface-card rounded-xl p-6 border border-outline-variant/20 flex-1">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-md text-headline-md text-text-primary">My Cards</h3>
+<button class="text-text-secondary hover:text-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+</button>
+</div>
+<div class="space-y-4">
+<!-- Bancolombia Visa Card (Conceptual visual representation) -->
+<div class="relative w-full h-32 rounded-xl p-4 overflow-hidden shadow-lg border border-white/10 group cursor-pointer" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+<!-- Abstract background patterns for card -->
+<div class="absolute right-0 top-0 w-32 h-32 bg-primary-fixed-dim/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-primary-fixed-dim/10 transition-all"></div>
+<div class="relative z-10 flex flex-col h-full justify-between">
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-label-caps text-text-primary tracking-widest opacity-80">BANCOLOMBIA</span>
+<!-- Visa Logo conceptual icon -->
+<span class="material-symbols-outlined text-white opacity-80">credit_card</span>
+</div>
+<div class="flex justify-between items-end">
+<div>
+<div class="font-label-mono text-label-mono text-text-secondary mb-1">**** **** **** 4291</div>
+<div class="font-body-md text-body-md text-text-primary">$2.1M <span class="text-[10px] text-text-secondary">Limit</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Davivienda Mastercard -->
+<div class="relative w-full h-32 rounded-xl p-4 overflow-hidden shadow-lg border border-white/5 group cursor-pointer" style="background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%);">
+<div class="absolute left-0 bottom-0 w-24 h-24 bg-red-500/10 rounded-full blur-2xl -ml-10 -mb-10 group-hover:bg-red-500/20 transition-all"></div>
+<div class="relative z-10 flex flex-col h-full justify-between">
+<div class="flex justify-between items-start">
+<span class="font-label-caps text-label-caps text-text-primary tracking-widest opacity-80">DAVIVIENDA</span>
+<div class="flex">
+<div class="w-4 h-4 rounded-full bg-red-500 opacity-80 mix-blend-screen"></div>
+<div class="w-4 h-4 rounded-full bg-yellow-500 opacity-80 mix-blend-screen -ml-2"></div>
+</div>
+</div>
+<div class="flex justify-between items-end">
+<div>
+<div class="font-label-mono text-label-mono text-text-secondary/80 mb-1">**** **** **** 8832</div>
+<div class="font-body-md text-body-md text-text-primary">$5.5M <span class="text-[10px] text-text-secondary/80">Limit</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Movements -->
+<div class="bg-surface-card rounded-xl p-6 border border-outline-variant/20 flex-1">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-md text-headline-md text-text-primary">Recent Movements</h3>
+<button class="text-text-secondary hover:text-text-primary text-sm font-label-caps">VIEW ALL</button>
+</div>
+<div class="space-y-4">
+<!-- Transaction Item -->
+<div class="flex items-center justify-between group hover:bg-surface-overlay/50 p-2 -mx-2 rounded-lg transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-overlay flex items-center justify-center border border-outline-variant text-text-secondary group-hover:text-primary-fixed-dim group-hover:border-primary-fixed-dim/30 transition-all">
+<span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+</div>
+<div>
+<div class="font-body-md text-body-md text-text-primary leading-tight">Amazon AWS</div>
+<div class="font-label-caps text-label-caps text-text-secondary mt-1">Today, 10:24 AM</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-label-mono text-label-mono text-text-primary">-$120.50</div>
+<div class="font-label-caps text-label-caps text-text-secondary mt-1">Bancolombia</div>
+</div>
+</div>
+<!-- Transaction Item -->
+<div class="flex items-center justify-between group hover:bg-surface-overlay/50 p-2 -mx-2 rounded-lg transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-overlay flex items-center justify-center border border-outline-variant text-text-secondary group-hover:text-primary-fixed-dim group-hover:border-primary-fixed-dim/30 transition-all">
+<span class="material-symbols-outlined text-[20px]">flight_takeoff</span>
+</div>
+<div>
+<div class="font-body-md text-body-md text-text-primary leading-tight">Avianca Flights</div>
+<div class="font-label-caps text-label-caps text-text-secondary mt-1">Yesterday</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-label-mono text-label-mono text-text-primary">-$450.00</div>
+<div class="font-label-caps text-label-caps text-text-secondary mt-1">Davivienda</div>
+</div>
+</div>
+<!-- Transaction Item (Income) -->
+<div class="flex items-center justify-between group hover:bg-surface-overlay/50 p-2 -mx-2 rounded-lg transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-fixed-dim/10 flex items-center justify-center border border-primary-fixed-dim/30 text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[20px]">south_west</span>
+</div>
+<div>
+<div class="font-body-md text-body-md text-text-primary leading-tight">Client Payment</div>
+<div class="font-label-caps text-label-caps text-text-secondary mt-1">Apr 12</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-label-mono text-label-mono text-primary-fixed-dim">+$3,200.00</div>
+<div class="font-label-caps text-label-caps text-text-secondary mt-1">Transfer</div>
+</div>
+</div>
+<!-- Transaction Item -->
+<div class="flex items-center justify-between group hover:bg-surface-overlay/50 p-2 -mx-2 rounded-lg transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-overlay flex items-center justify-center border border-outline-variant text-text-secondary group-hover:text-primary-fixed-dim group-hover:border-primary-fixed-dim/30 transition-all">
+<span class="material-symbols-outlined text-[20px]">restaurant</span>
+</div>
+<div>
+<div class="font-body-md text-body-md text-text-primary leading-tight">El Cielo</div>
+<div class="font-label-caps text-label-caps text-text-secondary mt-1">Apr 10</div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-label-mono text-label-mono text-text-primary">-$85.00</div>
+<div class="font-label-caps text-label-caps text-text-secondary mt-1">Davivienda</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Image Context (Placeholder to ensure IMAGE_2 is used logically, perhaps as a background texture for a wide promotional banner at the bottom) -->
+<div class="col-span-1 md:col-span-12 rounded-xl overflow-hidden relative h-32 border border-outline-variant/20 mt-4 group cursor-pointer flex items-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCzNhZLVzsMkxfAdT25p9F2WnhWrhn_mMKNUke12Bq72jsIClSqwoGRo5F1icq15kgoPSfqeoLVOR_7xeN6jmevRS4VQA-A3J2C7SUSsSwHIYURF568950bLXa7TMkQAgFPy0pFF_TutGbfw6eN6wbHq9UmeC-EoxmmCRTFfRH0KYPTh5uxlmfZGJRXmf2paTezaj0zIIGR7dU-CvoRwsPlgHPx3VWsPqX3Xhyf8EEneq_HrpBHLLYDRyXeTOzQvc3sLa-xj19YQPg'); background-size: cover; background-position: center;">
+<div class="absolute inset-0 bg-background/80 group-hover:bg-background/60 transition-colors"></div>
+<div class="relative z-10 p-6 flex justify-between w-full items-center">
+<div>
+<h4 class="font-headline-md text-headline-md text-primary-fixed-dim mb-1">Copiloto IA Pro Features Unlocked</h4>
+<p class="font-body-md text-body-md text-text-primary/80">Get deeper predictive insights and automated tax categorization.</p>
+</div>
+<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-label-caps text-label-caps hover:bg-primary-fixed hover:neon-glow transition-all hidden sm:block">
+                            EXPLORE NOW
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

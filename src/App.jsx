@@ -28,29 +28,33 @@ const getMammoth = () => {
 ══════════════════════════════════════════════════════════ */
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#020810;--bg2:#08101f;--bg3:#0e1830;--bg4:#131f3c;
-  --b1:rgba(255,255,255,0.055);--b2:rgba(255,255,255,0.09);--b3:rgba(255,255,255,0.14);
-  --t:#f0f4fc;--m:#4a5a78;--s:#68788f;--d:#96a3b8;
-  --tl:#00dfc8;--tl2:#00b5a4;--tlb:rgba(0,223,200,0.12);--tlbr:rgba(0,223,200,0.22);
-  --rd:#ff4560;--rdb:rgba(255,69,96,0.09);--rdbr:rgba(255,69,96,0.22);
-  --or:#ff9040;--orb:rgba(255,144,64,0.09);--orbr:rgba(255,144,64,0.22);
+  --bg:#0b141d;--bg2:#0B121E;--bg3:#182029;--bg4:#222b34;
+  --b1:rgba(58,74,68,0.25);--b2:rgba(131,149,141,0.2);--b3:rgba(185,203,195,0.15);
+  --t:#F0F4FC;--m:#8A99AF;--s:#b9cbc3;--d:#dbe3f0;
+  --tl:#00e0b7;--tl2:#00b5a4;--tlb:rgba(0,224,183,0.12);--tlbr:rgba(0,255,209,0.22);
+  --rd:#ffb4ab;--rdb:rgba(255,180,171,0.09);--rdbr:rgba(255,69,96,0.22);
+  --or:#ffb689;--orb:rgba(255,182,137,0.09);--orbr:rgba(255,144,64,0.22);
   --vi:#9b6fff;--vib:rgba(155,111,255,0.09);--vibr:rgba(155,111,255,0.22);
-  --gn:#52d98a;--gnb:rgba(82,217,138,0.09);--gnbr:rgba(82,217,138,0.22);
+  --gn:#15ffd1;--gnb:rgba(21,255,209,0.09);--gnbr:rgba(21,255,209,0.22);
   --bl:#4d9eff;--blb:rgba(77,158,255,0.09);--blbr:rgba(77,158,255,0.22);
   --fn:'Plus Jakarta Sans',sans-serif;--mo:'Space Mono',monospace;
   --r1:10px;--r2:14px;--r3:18px;--r4:22px;--r5:28px;
 }
-html,body{height:100%;background:#000;overflow:hidden}
+html,body{height:100%;background:#020810;overflow:hidden}
 #root{height:100vh;display:flex;justify-content:center;align-items:center;
-  background:radial-gradient(ellipse 80% 50% at 50% -5%,rgba(0,223,200,0.06),transparent)}
+  background:radial-gradient(ellipse 80% 50% at 50% -5%,rgba(0,224,183,0.08),transparent)}
 .app{
   width:100%;max-width:430px;height:100vh;background:var(--bg);
   font-family:var(--fn);color:var(--t);display:flex;flex-direction:column;
   position:relative;overflow:hidden;
   box-shadow:0 0 0 1px var(--b1),0 40px 120px rgba(0,0,0,.9)
 }
+.glass{background:rgba(11,18,30,0.6);backdrop-filter:blur(12px);border:1px solid var(--b1)}
+.neon{box-shadow:0 0 12px rgba(0,255,209,0.3)}
+.brand-logo{width:28px;height:28px;border-radius:8px;object-fit:cover;border:1px solid var(--tlbr)}
 .scr{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:88px}
 .scr::-webkit-scrollbar{display:none}
 
@@ -71,8 +75,11 @@ html,body{height:100%;background:#000;overflow:hidden}
   width:7px;height:7px;background:var(--rd);border:2px solid var(--bg);border-radius:50%}
 
 /* STATUS BAR */
-.sb{height:44px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 20px;flex-shrink:0;background:var(--bg)}
+.sb{height:52px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;flex-shrink:0;background:var(--bg);border-bottom:1px solid var(--b1)}
+.sb-brand{display:flex;align-items:center;gap:8px;min-width:0}
+.sb-brand h1{font-size:13px;font-weight:800;color:var(--tl);letter-spacing:-.02em;line-height:1.1}
+.sb-brand p{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--m)}
 
 /* TYPOGRAPHY */
 .h1{font-size:26px;font-weight:900;letter-spacing:-.03em;line-height:1.1}
@@ -91,7 +98,7 @@ html,body{height:100%;background:#000;overflow:hidden}
   border:none;cursor:pointer;font-family:var(--fn);font-weight:700;
   letter-spacing:.01em;transition:all .18s;white-space:nowrap;border-radius:var(--r2)}
 .btn:active{transform:scale(.95)}
-.bp{background:linear-gradient(135deg,var(--tl),var(--tl2));color:#001814;
+.bp{background:linear-gradient(135deg,var(--tl),#00ffd1);color:#002019;
   font-size:14px;padding:14px 22px;width:100%}
 .bp:hover{box-shadow:0 6px 30px rgba(0,223,200,0.28);transform:translateY(-1px)}
 .bs{background:var(--bg3);border:1px solid var(--b2);color:var(--d);
@@ -803,7 +810,7 @@ function HomeScreen({cards,txns,setScreen,alerts,loadDemo}){
       {/* Header */}
       <div className="hdr">
         <div>
-          <p className="lbl" style={{marginBottom:3}}>COPILOTO FINANCIERO</p>
+          <p className="lbl" style={{marginBottom:3}}>OVERVIEW</p>
           <h1 className="h1">Dashboard</h1>
         </div>
         <button className="btn bi" style={{position:"relative"}} onClick={()=>setScreen("alerts")}>
@@ -1834,13 +1841,16 @@ export default function App(){
       <div className="app">
         {/* Status bar */}
         <div className="sb">
-          <span style={{fontFamily:"var(--mo)",fontSize:11,fontWeight:700}}>{time}</span>
-          <div style={{display:"flex",gap:8,alignItems:"center"}}>
-            {user&&<button className="btn bg" style={{fontSize:9,padding:"4px 8px"}} onClick={signOut}>Salir</button>}
-            <div style={{display:"flex",gap:5,alignItems:"center",color:"var(--s)",fontSize:12}}>
-            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="6" width="3" height="6"/><rect x="4.5" y="4" width="3" height="8"/><rect x="9" y="2" width="3" height="10"/><rect x="13.5" y="0" width="2.5" height="12"/></svg>
-            <svg width="22" height="12" viewBox="0 0 22 12" fill="currentColor"><rect x="0" y="1" width="18" height="10" rx="2" fill="none" stroke="currentColor" strokeWidth="1.2"/><rect x="1.5" y="2.5" width="12" height="7" rx="1" fill="currentColor"/><path d="M19 4.5v3a1.5 1.5 0 000-3z"/></svg>
+          <div className="sb-brand">
+            <img src={`${import.meta.env.BASE_URL}logo-copiloto.png`} alt="Copiloto IA" className="brand-logo"/>
+            <div>
+              <h1>Copiloto IA</h1>
+              <p>Wealth Management</p>
             </div>
+          </div>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            <span style={{fontFamily:"var(--mo)",fontSize:10,fontWeight:700,color:"var(--m)"}}>{time}</span>
+            {user&&<button className="btn bg" style={{fontSize:9,padding:"4px 8px"}} onClick={signOut}>Salir</button>}
           </div>
         </div>
 

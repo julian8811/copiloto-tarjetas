@@ -1,0 +1,40 @@
+[
+  {
+    "id": "e5885e1754664026bd21ee603d998bb7",
+    "title": "Dashboard Financiero",
+    "slug": "dashboard-financiero",
+    "html": "/workspace/stitch-export/screens/dashboard-financiero.html",
+    "size": 31157,
+    "screenshot": "https://lh3.googleusercontent.com/aida/AP1WRLt1O57g5gsVnSWLnh-4CMSDr07RnLXcrG0cS_8z8QJ3EMcAmQyjMSN5vzSeGUoOTPJzLzeUwrsqqqZXoK9OdR8Lf4MnLWJeIkFDy7A_nneRsH1_csW_W2VNSaM0fhQoiwK_F8t-8rCoh2yqyaD6qCOfDICUPyBK48glQU0jebzhcd0JROPxTK4_mjf5qOkX1GhQ2chWv_uU4LoKI9GloG8fAaza6GzA458lczaIexIHE89RK5DPcVddL2o"
+  },
+  {
+    "id": "41bbc1e2261244d99a40b20d93f0d777",
+    "title": "Logo Copiloto IA",
+    "slug": "logo-copiloto-ia",
+    "screenshot": "https://lh3.googleusercontent.com/aida/AP1WRLuM0KZApJCCCZSPUpamO3ifX6Awgg6EeOR7bQ8e5ZePEx487Mx0VwEYF5OzFP4IdUyzyOf3Y85fAFAn0tdz3jKpD3poaIgr_j1bYl30Ro8ZoboCV1S0sQdqhgc35PZA6IVfR6gptKT36NEJWkZkK4QxGG_KjELvcuevABuvzfmbU8L804BPZdNgGX9B4XHAoEmv58pkEBeU2VSc62cTxJBk7FjTRhAaVYYtwRArOPN2UuW_mUg98iLTlAM"
+  },
+  {
+    "id": "8a77eb3f9bad465a8690c040ef138dc7",
+    "title": "Registrar Gastos",
+    "slug": "registrar-gastos",
+    "html": "/workspace/stitch-export/screens/registrar-gastos.html",
+    "size": 22359,
+    "screenshot": "https://lh3.googleusercontent.com/aida/AP1WRLv2OGwdobQP4_GfZhoEDPz6b4sXiSXMM9OKJh1SAv_ZHhFicKd1j0ddzD3H-mL_FYPg83k2_wB0-eMiSEt22fWF6DibAZT-wctzNGrQVR4HJZ8BNPSFxvMYna6wEoIR3QAN_qEvS-Po8JuE1-1FpbuqnnHLSLFK00V8w5oZH5lYgJBQe4EEJbKh8haOGY1QUSXSEuc-RFouTImt5i8lt2j21ywHvky6PYMR840-tQkZaZNczV0un2lZSw"
+  },
+  {
+    "id": "71ca4daef9934ed0ad653cf48d02215a",
+    "title": "Copiloto IA - Chat",
+    "slug": "copiloto-ia-chat",
+    "html": "/workspace/stitch-export/screens/copiloto-ia-chat.html",
+    "size": 24341,
+    "screenshot": "https://lh3.googleusercontent.com/aida/AP1WRLtBa4FwRBCeR-KUeiw7F7dHc_LE1U0GEhdDtMMSYyi7HzgIZPvapjnWYLBcrhtIBuqxUsAddxjRmSjo2cZAANbECYpKZXvh-XsGSIEOg0LDTlof_530JhYGMgyLgHZWLpjuR8I1mhN5orNi_FAhxN3fxsim_wFCUj-6LaTIezIWWk53joUtAbRxdN-ivnBIoF2lo0bZy8kC2PTall2MYpzK0673akzkiLzGqZOIP2g3Wy6w6UqKVrScctY"
+  },
+  {
+    "id": "16485b9485724c3a96700e0182a1bffd",
+    "title": "Gesti\u00f3n de Tarjetas",
+    "slug": "gesti-n-de-tarjetas",
+    "html": "/workspace/stitch-export/screens/gesti-n-de-tarjetas.html",
+    "size": 17562,
+    "screenshot": "https://lh3.googleusercontent.com/aida/AP1WRLstaEcbj3h7LxfY-WnaLB-IpNANTVA4O5A67kTIq2ZexpCsj577ry9_j93CWrn_PB8Lr7KqpdykTD3AZlzqF2zIKQdxXvTftk4xwyO1kAg-qv8OUHj5oGoNJvy7z29pLTrAoydo0Erw--GKuCpaZ4dj11Up77hTcvFLyufYmsE0BPCXYB4zIepvVQWEwQYmOEu0DoMhXCNKVqfMbhvVxPiMCEHy_ZtQ3UU9Kc1oE1-a1qRtk1hsVJS26Q"
+  }
+]

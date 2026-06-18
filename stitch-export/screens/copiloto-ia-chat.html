@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Copilot Chat Interface - Copiloto IA</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed-dim": "#ffb689",
+                      "inverse-primary": "#006b57",
+                      "surface-container": "#182029",
+                      "secondary-fixed": "#ffdbc7",
+                      "on-background": "#dbe3f0",
+                      "inverse-on-surface": "#29313a",
+                      "text-primary": "#F0F4FC",
+                      "on-secondary": "#512300",
+                      "primary-fixed-dim": "#00e0b7",
+                      "text-secondary": "#8A99AF",
+                      "primary": "#fffffd",
+                      "surface-bright": "#313a44",
+                      "primary-container": "#00ffd1",
+                      "on-tertiary-fixed-variant": "#920027",
+                      "surface-variant": "#2d363f",
+                      "tertiary-fixed-dim": "#ffb3b5",
+                      "tertiary": "#fffeff",
+                      "on-secondary-fixed-variant": "#733500",
+                      "on-secondary-container": "#fff7f3",
+                      "secondary": "#ffb689",
+                      "on-tertiary-fixed": "#40000c",
+                      "error": "#ffb4ab",
+                      "surface-overlay": "#161F2E",
+                      "error-container": "#93000a",
+                      "on-primary-fixed-variant": "#005141",
+                      "surface-container-highest": "#2d363f",
+                      "surface-container-high": "#222b34",
+                      "surface-tint": "#00e0b7",
+                      "secondary-container": "#b55801",
+                      "surface": "#0b141d",
+                      "on-primary-fixed": "#002019",
+                      "surface-card": "#0B121E",
+                      "background": "#0b141d",
+                      "on-secondary-fixed": "#311300",
+                      "on-primary-container": "#00725c",
+                      "status-gold": "#FFD700",
+                      "on-tertiary": "#680019",
+                      "on-error-container": "#ffdad6",
+                      "tertiary-container": "#ffd9da",
+                      "surface-container-low": "#141c25",
+                      "surface-dim": "#0b141d",
+                      "outline-variant": "#3a4a44",
+                      "on-error": "#690005",
+                      "primary-fixed": "#15ffd1",
+                      "on-primary": "#00382c",
+                      "outline": "#83958d",
+                      "tertiary-fixed": "#ffdada",
+                      "on-surface-variant": "#b9cbc3",
+                      "surface-container-lowest": "#070f17",
+                      "inverse-surface": "#dbe3f0",
+                      "on-tertiary-container": "#c5133c",
+                      "on-surface": "#dbe3f0"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "unit": "8px",
+                      "margin-desktop": "48px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "label-mono": [
+                              "Space Mono"
+                      ],
+                      "body-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "display-lg-mobile": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "display-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-caps": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-md": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "label-mono": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-caps": [
+                              "11px",
+                              {
+                                      "lineHeight": "12px",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.text-primary');
+        }
+        
+        /* Custom scrollbar for chat area */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-variant');
+            border-radius: theme('borderRadius.full');
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline');
+        }
+
+        .neon-glow {
+            box-shadow: 0px 0px 12px rgba(0, 255, 209, 0.3);
+        }
+        
+        .neon-glow-hover:hover {
+            box-shadow: 0px 0px 12px rgba(0, 255, 209, 0.3);
+        }
+
+        .chat-gradient {
+            background: linear-gradient(180deg, rgba(11,20,29,0) 0%, rgba(11,20,29,1) 100%);
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden font-body-md">
+<!-- SideNavBar (Predicted Component) -->
+<nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-surface flex-col p-unit border-r border-outline-variant z-50">
+<!-- Header -->
+<div class="px-4 py-6 mb-4 flex flex-col items-start border-b border-surface-variant">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-lg bg-surface-overlay flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="Logo Copiloto IA" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvysDpTG4D4Z5RIM-J3U9OQBVjvvUcNzCpgMo1GdciRptCY4lvzdC_XLzM5AKgR8YcD5z_ibHUBAmCm29gGsjvmKRbNu2laTAhYy0wJVexAXSRODFv_GXPE5Gd67x5vBjalvSGQuJTuSDN_ImJ3EnhRUiV9QWkOgIfgtS6zgbM5AbtfTeZkfi9oQGtp_jszZOWcTqr_dkzfv0X6u1-QYnPn3BRkGZB0R82Lk1BjLV5TZfDzCSv7lBjG5DvQ-9DFlxuihOb36NeAqw"/>
+</div>
+<div>
+<h1 class="font-display-lg text-headline-md text-primary-fixed-dim tracking-tight m-0">Copiloto IA</h1>
+<span class="font-label-caps text-label-caps text-text-secondary">Wealth Management</span>
+</div>
+</div>
+<button class="w-full bg-surface-overlay hover:bg-surface-variant text-primary-fixed-dim font-label-caps text-label-caps py-2 rounded border border-outline-variant transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+                Upgrade to Pro
+            </button>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 flex flex-col gap-1 overflow-y-auto">
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">credit_card</span>
+                Cards
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
+                Transactions
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">monitoring</span>
+                Analysis
+            </a>
+<!-- Active: AI Copilot -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container bg-primary-container rounded-lg shadow-[0px_0px_12px_rgba(0,255,209,0.3)] transition-all scale-[0.98] duration-200 font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+                AI Copilot
+            </a>
+</div>
+<!-- Footer Actions -->
+<div class="mt-auto pt-4 border-t border-surface-variant flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+                Settings
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-secondary hover:text-text-primary hover:bg-surface-variant dark:hover:bg-surface-variant rounded-lg transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">logout</span>
+                Logout
+            </a>
+<!-- User Profile Snippet -->
+<div class="mt-2 flex items-center gap-3 px-4 py-2">
+<div class="w-8 h-8 rounded-full bg-surface-overlay overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A macro photography shot of a sleek metallic surface reflecting neon teal and dark navy lights. The texture is smooth with subtle tech-like etching. The lighting is low-key, dramatic, and moody, evoking a sense of advanced digital craftsmanship and high-performance financial technology." src="https://lh3.googleusercontent.com/aida-public/AB6AXuACn8SnVpfNRBhQ0wWHqJwJwu4RzPG_nWIdJZs3oPLLseOemSR5Kaf931RSGmdVT93fkzbfnlG8BWGSIJDZdxaO0HjvSVABly8KBeK6i_1d51UtQR44yxPa6EgmI9LRYT3kntWsTJ55nsdo6WQ2zfB-nuzn-36rI1xAMHVeVT7mbMcjNOK0uGVGU34rAQGE1jTSwr7_cajb6ArTw34o2wUYWVNa05UrhtlyoATE2wlWo9_CuDVu1BTaIqtA_bZMCT1NFsb1wEuLILo"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-text-primary">User</span>
+<span class="font-label-mono text-[10px] text-text-secondary">Pro Plan</span>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 h-full flex flex-col relative bg-base">
+<!-- TopNavBar for Mobile (Simplified, as sidebar handles desktop) -->
+<header class="md:hidden flex justify-between items-center w-full px-margin-mobile py-4 bg-background/80 dark:bg-background/80 backdrop-blur-md sticky top-0 z-40 border-b border-surface-variant">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-surface-overlay flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="Logo Copiloto IA" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvysDpTG4D4Z5RIM-J3U9OQBVjvvUcNzCpgMo1GdciRptCY4lvzdC_XLzM5AKgR8YcD5z_ibHUBAmCm29gGsjvmKRbNu2laTAhYy0wJVexAXSRODFv_GXPE5Gd67x5vBjalvSGQuJTuSDN_ImJ3EnhRUiV9QWkOgIfgtS6zgbM5AbtfTeZkfi9oQGtp_jszZOWcTqr_dkzfv0X6u1-QYnPn3BRkGZB0R82Lk1BjLV5TZfDzCSv7lBjG5DvQ-9DFlxuihOb36NeAqw"/>
+</div>
+<h1 class="font-headline-md text-headline-md text-text-primary">Copiloto IA</h1>
+</div>
+<button class="text-text-secondary hover:text-text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<!-- TopNavBar (Predicted Component - Desktop contextual header) -->
+<header class="hidden md:flex justify-between items-center w-full px-margin-desktop py-4 bg-background/80 dark:bg-background/80 backdrop-blur-md sticky top-0 z-40 border-b border-surface-variant">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-fixed-dim">smart_toy</span>
+<h2 class="font-headline-md text-headline-md text-text-primary">AI Financial Assistant</h2>
+<!-- Status Badge -->
+<div class="ml-4 flex items-center gap-2 px-3 py-1 bg-surface-overlay rounded-full border border-outline-variant">
+<div class="w-2 h-2 rounded-full bg-primary-fixed-dim shadow-[0px_0px_8px_rgba(0,255,209,0.8)] animate-pulse"></div>
+<span class="font-label-mono text-label-mono text-text-secondary">Connected</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-text-secondary hover:text-text-primary hover:bg-surface-overlay dark:hover:bg-surface-overlay rounded-full p-2 transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-text-secondary hover:text-text-primary hover:bg-surface-overlay dark:hover:bg-surface-overlay rounded-full p-2 transition-all">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+</header>
+<!-- Chat Container -->
+<div class="flex-1 overflow-hidden flex flex-col relative w-full max-w-5xl mx-auto px-margin-mobile md:px-margin-desktop">
+<!-- Chat History Area -->
+<div class="flex-1 overflow-y-auto pb-32 pt-8 flex flex-col gap-6" id="chat-messages">
+<!-- System Greeting (Centered initial state) -->
+<div class="flex flex-col items-center justify-center h-full mb-12 animate-[fadeIn_0.5s_ease-out]">
+<div class="w-24 h-24 mb-6 rounded-full bg-surface-overlay flex items-center justify-center neon-glow border border-primary-fixed-dim/30">
+<img alt="Logo Copiloto IA" class="w-16 h-16 object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvysDpTG4D4Z5RIM-J3U9OQBVjvvUcNzCpgMo1GdciRptCY4lvzdC_XLzM5AKgR8YcD5z_ibHUBAmCm29gGsjvmKRbNu2laTAhYy0wJVexAXSRODFv_GXPE5Gd67x5vBjalvSGQuJTuSDN_ImJ3EnhRUiV9QWkOgIfgtS6zgbM5AbtfTeZkfi9oQGtp_jszZOWcTqr_dkzfv0X6u1-QYnPn3BRkGZB0R82Lk1BjLV5TZfDzCSv7lBjG5DvQ-9DFlxuihOb36NeAqw"/>
+</div>
+<h2 class="font-display-lg text-display-lg text-text-primary mb-2 text-center">Hello, how can I help<br/>with your finances today?</h2>
+<p class="font-body-lg text-body-lg text-text-secondary text-center max-w-lg mb-8">
+                        I can analyze your spending, help you plan for credit card payments, or forecast your net worth.
+                    </p>
+<!-- Quick Actions Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl">
+<!-- Action 1 -->
+<button class="flex flex-col items-start p-4 bg-surface-card rounded-lg border border-outline-variant hover:border-primary-fixed-dim hover:bg-surface-variant transition-all text-left group">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary-fixed-dim mb-2">credit_card</span>
+<span class="font-body-md text-body-md text-text-primary font-semibold">How much should I pay?</span>
+<span class="font-label-mono text-label-mono text-text-secondary mt-1">Analyze next month's invoice</span>
+</button>
+<!-- Action 2 -->
+<button class="flex flex-col items-start p-4 bg-surface-card rounded-lg border border-outline-variant hover:border-primary-fixed-dim hover:bg-surface-variant transition-all text-left group">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary-fixed-dim mb-2">trending_up</span>
+<span class="font-body-md text-body-md text-text-primary font-semibold">Forecast Net Worth</span>
+<span class="font-label-mono text-label-mono text-text-secondary mt-1">Project 6 months ahead</span>
+</button>
+<!-- Action 3 -->
+<button class="flex flex-col items-start p-4 bg-surface-card rounded-lg border border-outline-variant hover:border-primary-fixed-dim hover:bg-surface-variant transition-all text-left group">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary-fixed-dim mb-2">pie_chart</span>
+<span class="font-body-md text-body-md text-text-primary font-semibold">Expense Breakdown</span>
+<span class="font-label-mono text-label-mono text-text-secondary mt-1">Where did my money go?</span>
+</button>
+<!-- Action 4 -->
+<button class="flex flex-col items-start p-4 bg-surface-card rounded-lg border border-outline-variant hover:border-primary-fixed-dim hover:bg-surface-variant transition-all text-left group">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary-fixed-dim mb-2">notifications_active</span>
+<span class="font-body-md text-body-md text-text-primary font-semibold">Recent Alerts</span>
+<span class="font-label-mono text-label-mono text-text-secondary mt-1">Check unusual transactions</span>
+</button>
+</div>
+</div>
+<!-- Example User Message (Hidden by default, shown for structure context) -->
+<div class="flex justify-end hidden">
+<div class="bg-surface-variant rounded-2xl rounded-tr-sm px-6 py-4 max-w-[80%] border border-outline-variant">
+<p class="font-body-md text-body-md text-text-primary">How much should I pay on my main credit card next month?</p>
+</div>
+</div>
+<!-- Example AI Response (Hidden by default) -->
+<div class="flex justify-start gap-4 hidden">
+<div class="w-8 h-8 rounded-full bg-surface-overlay flex items-center justify-center flex-shrink-0 mt-1 border border-primary-fixed-dim/50">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed-dim">smart_toy</span>
+</div>
+<div class="flex flex-col gap-2 max-w-[85%]">
+<div class="bg-surface-card rounded-2xl rounded-tl-sm px-6 py-4 border border-outline-variant">
+<p class="font-body-md text-body-md text-text-primary mb-4">Based on your current spending patterns and scheduled transactions, here is the analysis for your upcoming invoice:</p>
+<!-- Financial Data Card inside chat -->
+<div class="bg-surface-overlay rounded-lg p-4 border border-outline-variant flex flex-col gap-3">
+<div class="flex justify-between items-center border-b border-surface-variant pb-2">
+<span class="font-label-caps text-label-caps text-text-secondary">ESTIMATED INVOICE</span>
+<span class="font-label-mono text-[14px] text-primary-fixed-dim">$3,450.00</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-text-primary">Current Balance</span>
+<span class="font-label-mono text-label-mono text-text-primary">$2,100.00</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-md text-body-md text-text-primary">Projected Spending</span>
+<span class="font-label-mono text-label-mono text-text-secondary">+$1,350.00</span>
+</div>
+</div>
+</div>
+<!-- Contextual Actions -->
+<div class="flex gap-2 mt-1">
+<button class="px-3 py-1 bg-surface-overlay hover:bg-surface-variant rounded-full border border-outline-variant font-label-caps text-label-caps text-text-secondary hover:text-primary-fixed-dim transition-colors">View Details</button>
+<button class="px-3 py-1 bg-surface-overlay hover:bg-surface-variant rounded-full border border-outline-variant font-label-caps text-label-caps text-text-secondary hover:text-primary-fixed-dim transition-colors">Adjust Forecast</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Area (Fixed at bottom) -->
+<div class="absolute bottom-0 left-0 right-0 p-margin-mobile md:p-margin-desktop chat-gradient z-10">
+<div class="relative max-w-4xl mx-auto">
+<!-- Typing Indicator / ML Status -->
+<div class="absolute -top-8 left-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[14px] text-primary-fixed-dim animate-spin">model_training</span>
+<span class="font-label-mono text-[10px] text-text-secondary uppercase tracking-widest">Model Ready</span>
+</div>
+<div class="bg-surface-overlay rounded-xl border border-outline-variant focus-within:border-primary-fixed-dim focus-within:ring-1 focus-within:ring-primary-fixed-dim transition-all flex items-end p-2 shadow-lg">
+<!-- Attachment Button -->
+<button class="p-3 text-text-secondary hover:text-primary-fixed-dim transition-colors rounded-lg hover:bg-surface-variant">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<!-- Input Field -->
+<textarea class="flex-1 bg-transparent border-none text-text-primary font-body-md text-body-md resize-none max-h-32 min-h-[48px] py-3 px-2 focus:ring-0 placeholder-text-secondary/50" placeholder="Ask me anything about your finances..." rows="1"></textarea>
+<!-- Submit Button -->
+<button class="p-3 bg-primary-container text-on-primary-container hover:bg-primary-fixed hover:text-on-primary-fixed transition-colors rounded-lg ml-2 flex items-center justify-center neon-glow-hover">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+<div class="text-center mt-2">
+<span class="font-label-mono text-[10px] text-text-secondary/50">AI Copilot can make mistakes. Consider verifying important financial information.</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+<script>
+        // Simple auto-resize for textarea
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            if(this.value === '') {
+                this.style.height = '48px';
+            }
+        });
+    </script>
+</body></html>
