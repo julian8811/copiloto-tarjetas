@@ -1,49 +1,60 @@
-# 🚀 Copiloto Inteligente de Tarjetas
+# Copiloto Inteligente de Tarjetas
 
-App móvil de gestión de tarjetas de crédito con IA.
+App móvil de gestión de tarjetas de crédito con IA, analítica y copiloto financiero.
 
-## Despliegue en 4 pasos
+## Requisitos
 
-### Requisitos
 - Node.js 18+
-- Git instalado
-
----
-
-### Paso 1 — Instalar y construir
-```bash
-npm install
-npm run build
-```
-
-### Paso 2 — Subir a GitHub
-```bash
-git init
-git add -A
-git commit -m "Deploy inicial"
-git branch -M main
-git remote add origin https://github.com/julian8811/copiloto-tarjetas.git
-git push -u origin main
-```
-> Si pide contraseña: usuario `julian8811`, contraseña `Julian881100`
-
-### Paso 3 — Crear repo en GitHub
-Ve a https://github.com/new y crea el repo `copiloto-tarjetas` (público)
-
-### Paso 4 — Desplegar en Vercel
-```bash
-npx vercel --prod
-```
-- Cuando pregunte: selecciona "Link to existing project" si ya existe, o crea nuevo
-- Scope: `montoya8811-1146`
-- Framework: Vite
-
-**O más fácil:** Ve a https://vercel.com/new, importa el repo de GitHub y clic en Deploy.
-
----
+- npm
 
 ## Desarrollo local
+
 ```bash
+npm install
+cp .env.example .env.local
+# Edita .env.local y agrega GROQ_API_KEY para el copiloto IA
 npm run dev
-# Abre http://localhost:5173
 ```
+
+Abre http://localhost:5173
+
+## Variables de entorno
+
+| Variable | Requerida | Descripción |
+|----------|-----------|-------------|
+| `GROQ_API_KEY` | Para copiloto IA | API key de Groq (solo server-side) |
+| `VITE_BASE_PATH` | No | `/` para Vercel, `/copiloto-tarjetas/` para GitHub Pages |
+| `VITE_SUPABASE_URL` | Para sync multi-dispositivo | URL del proyecto Supabase |
+| `VITE_SUPABASE_ANON_KEY` | Para sync multi-dispositivo | Anon key de Supabase |
+
+## Scripts
+
+```bash
+npm run dev      # Servidor de desarrollo
+npm run build    # Build de producción
+npm run preview  # Preview del build
+npm test         # Tests unitarios
+```
+
+## Despliegue en Vercel
+
+1. Importa el repositorio en [vercel.com/new](https://vercel.com/new)
+2. Framework: Vite
+3. Agrega `GROQ_API_KEY` en Environment Variables
+4. Deploy
+
+## Supabase (opcional)
+
+Para autenticación y sincronización multi-dispositivo:
+
+1. Crea un proyecto en [supabase.com](https://supabase.com)
+2. Ejecuta la migración en `supabase/migrations/001_initial_schema.sql`
+3. Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`
+
+## GitHub Pages (subpath)
+
+```bash
+VITE_BASE_PATH=/copiloto-tarjetas/ npm run build
+```
+
+Despliega el contenido de `dist/` en la rama `gh-pages`.

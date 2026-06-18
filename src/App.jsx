@@ -5,6 +5,11 @@ import {
   AreaChart, Area, BarChart, Bar, LineChart, Line,
   PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer
 } from "recharts";
+import { ML } from "./utils/ml.js";
+import { genAlerts } from "./utils/alerts.js";
+import { useAuth } from "./hooks/useAuth.js";
+import { useDataStore } from "./hooks/useDataStore.js";
+import { AuthScreen } from "./components/AuthScreen.jsx";
 
 // Safe wrappers in case libraries aren't available
 const getXLSX = () => {
@@ -399,72 +404,6 @@ function CCVis({ card, txns, onClick, noAnim }) {
 }
 
 /* ══════════════════════════════════════════════════════════
-   ML ENGINE
-══════════════════════════════════════════════════════════ */
-const ML = {
-  linReg(pts) {
-    const n=pts.length; if(n<2) return {slope:0,intercept:pts[0]||0};
-    const sx=pts.reduce((_,__,i)=>_+i,0),sy=pts.reduce((s,v)=>s+v,0);
-    const sxy=pts.reduce((s,v,i)=>s+i*v,0),sx2=pts.reduce((s,_,i)=>s+i*i,0);
-    const slope=(n*sxy-sx*sy)/(n*sx2-sx*sx||1);
-    return {slope,intercept:(sy-slope*sx)/n};
-  },
-  predict(pts,n=3) {
-    const {slope,intercept}=this.linReg(pts);
-    return Array.from({length:n},(_,i)=>Math.max(0,Math.round(slope*(pts.length+i)+intercept)));
-  },
-  ema(vals,a=0.3) {
-    if(!vals.length) return [];
-    const r=[vals[0]];
-    for(let i=1;i<vals.length;i++) r.push(a*vals[i]+(1-a)*r[i-1]);
-    return r;
-  },
-  anomalies(vals,th=2.0) {
-    if(vals.length<3) return vals.map(()=>false);
-    const mean=vals.reduce((s,v)=>s+v,0)/vals.length;
-    const std=Math.sqrt(vals.reduce((s,v)=>s+(v-mean)**2,0)/vals.length);
-    return vals.map(v=>std>0?Math.abs((v-mean)/std)>th:false);
-  },
-  health(cards,txns) {
-    if(!cards.length) return 50;
-    const tl=cards.reduce((s,c)=>s+c.limit,0);
-    const tu=cards.reduce((s,c)=>s+txns.filter(t=>t.cardId===c.id).reduce((a,t)=>a+t.amount,0),0);
-    const uScore=Math.max(0,40-PCT(tu,tl)*0.4);
-    const dScore=Math.min(20,cards.length*8);
-    const mx=Math.max(...cards.map(c=>PCT(txns.filter(t=>t.cardId===c.id).reduce((a,t)=>a+t.amount,0),c.limit)),0);
-    return Math.min(100,Math.round(uScore+dScore+Math.max(0,40-mx*0.4)));
-  },
-  monthlyData(txns,n=6) {
-    const now=new Date();
-    return Array.from({length:n},(_,i)=>{
-      const d=new Date(now.getFullYear(),now.getMonth()-(n-1-i),1);
-      const key=MK(d.toISOString());
-      const mt=txns.filter(t=>MK(t.date)===key);
-      const total=mt.reduce((s,t)=>s+t.amount,0);
-      const bycat={}; CATS.forEach(c=>{bycat[c]=mt.filter(t=>t.cat===c).reduce((s,t)=>s+t.amount,0);});
-      return {mes:MNAMES[d.getMonth()],total,...bycat};
-    });
-  },
-  predictEnd(txns) {
-    const now=new Date(),thisM=MK(now.toISOString());
-    const mt=txns.filter(t=>MK(t.date)===thisM);
-    const day=now.getDate(),dim=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
-    const cur=mt.reduce((s,t)=>s+t.amount,0);
-    const daily=day>0?cur/day:0;
-    const linPred=Math.round(daily*dim);
-    const hist=[];
-    for(let i=5;i>=1;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);hist.push(txns.filter(t=>MK(t.date)===MK(d.toISOString())).reduce((s,t)=>s+t.amount,0));}
-    if(hist.filter(v=>v>0).length>=2){const {slope,intercept}=this.linReg(hist);const tp=Math.max(0,slope*hist.length+intercept);return Math.round(linPred*0.55+tp*0.45);}
-    return linPred;
-  },
-  riskMin(cards,txns) {
-    const tl=cards.reduce((s,c)=>s+c.limit,0);if(!tl) return 0;
-    const tu=cards.reduce((s,c)=>s+txns.filter(t=>t.cardId===c.id).reduce((a,t)=>a+t.amount,0),0);
-    return Math.min(95,Math.round(PCT(tu,tl)*1.1));
-  }
-};
-
-/* ══════════════════════════════════════════════════════════
    FILE PARSER — robust multi-format
 ══════════════════════════════════════════════════════════ */
 const FP = {
@@ -767,77 +706,6 @@ const FP = {
 };
 
 /* ══════════════════════════════════════════════════════════
-   SEED DATA
-══════════════════════════════════════════════════════════ */
-const SEED=(()=>{
-  const now=new Date();
-  const mk=(n,c,a,cid,days,cu=1,cur=1)=>{const d=new Date(now);d.setDate(d.getDate()-days);return{id:UID(),name:n,cat:c,amount:a,cardId:cid,date:d.toISOString().split("T")[0],cuotas:cu,cuotaNum:cur,note:""};};
-  const pv=(n,c,a,cid,mb,day)=>{const d=new Date(now.getFullYear(),now.getMonth()-mb,day);return{id:UID(),name:n,cat:c,amount:a,cardId:cid,date:d.toISOString().split("T")[0],cuotas:1,cuotaNum:1,note:""};};
-  return {
-    cards:[
-      {id:"c1",bank:"Bancolombia",franchise:"Visa",name:"Infinite",last4:"4821",limit:15000000,theme:"teal",cutDay:22,payDay:7,holder:"CARLOS TORRES"},
-      {id:"c2",bank:"Davivienda",franchise:"Mastercard",name:"Gold",last4:"3307",limit:8000000,theme:"ruby",cutDay:15,payDay:28,holder:"CARLOS TORRES"},
-    ],
-    txns:[
-      mk("El Corral Gourmet","Restaurantes",89000,"c1",0),
-      mk("Éxito Salitre","Supermercado",312000,"c2",1),
-      mk("Netflix","Suscripciones",47900,"c1",1),
-      mk("Uber","Transporte",23500,"c1",2),
-      mk("Farmacia Cruz Verde","Salud",67000,"c2",3),
-      mk("Cinemark Santafé","Entretenimiento",52000,"c1",4),
-      mk("Decathlon","Ropa",289000,"c1",5,3,1),
-      mk("EPM Energía","Servicios",186000,"c2",6),
-      mk("Andrés Carne de Res","Restaurantes",345000,"c1",8),
-      mk("Carulla","Supermercado",267000,"c2",9),
-      mk("Spotify","Suscripciones",19900,"c1",9),
-      mk("Claro","Servicios",89000,"c2",10),
-      mk("InDrive","Transporte",34500,"c1",11),
-      mk("Jumbo Hayuelos","Supermercado",198000,"c2",12),
-      mk("Cine Colombia","Entretenimiento",38000,"c1",14),
-      mk("Apple App Store","Tecnología",32900,"c1",16),
-      mk("Avianca","Viajes",895000,"c2",18,6,1),
-      mk("Farmacia Alemana","Salud",43000,"c2",20),
-      pv("Restaurante","Restaurantes",320000,"c1",1,8),
-      pv("Supermercado","Supermercado",580000,"c2",1,15),
-      pv("Uber","Transporte",95000,"c1",1,20),
-      pv("Entretenimiento","Entretenimiento",180000,"c1",2,5),
-      pv("Restaurante","Restaurantes",290000,"c1",2,18),
-      pv("Supermercado","Supermercado",620000,"c2",2,22),
-      pv("Netflix","Suscripciones",47900,"c1",2,1),
-      pv("Restaurante","Restaurantes",410000,"c1",3,5),
-      pv("Supermercado","Supermercado",540000,"c2",3,12),
-      pv("Viajes","Viajes",1200000,"c2",3,15),
-      pv("Restaurante","Restaurantes",275000,"c1",4,8),
-      pv("Supermercado","Supermercado",490000,"c2",4,20),
-      pv("Tecnología","Tecnología",240000,"c1",4,25),
-      pv("Restaurante","Restaurantes",380000,"c1",5,7),
-      pv("Supermercado","Supermercado",610000,"c2",5,14),
-      pv("Salud","Salud",95000,"c2",5,21),
-    ]
-  };
-})();
-
-/* ══════════════════════════════════════════════════════════
-   STORAGE HOOK
-══════════════════════════════════════════════════════════ */
-function useStore(key,init){
-  const [val,set]=useState(init);
-  const [rdy,setRdy]=useState(false);
-  useEffect(()=>{
-    (async()=>{
-      try{const r=await window.storage.get(key);if(r?.value)set(JSON.parse(r.value));}catch{}
-      setRdy(true);
-    })();
-  },[]);
-  const save=useCallback(async v=>{
-    const nv=typeof v==="function"?v(val):v;
-    set(nv);
-    try{await window.storage.set(key,JSON.stringify(nv));}catch{}
-  },[key,val]);
-  return[val,save,rdy];
-}
-
-/* ══════════════════════════════════════════════════════════
    ICONS
 ══════════════════════════════════════════════════════════ */
 const IC={
@@ -913,7 +781,7 @@ const CTip=({active,payload,label})=>{
 /* ══════════════════════════════════════════════════════════
    HOME SCREEN
 ══════════════════════════════════════════════════════════ */
-function HomeScreen({cards,txns,setScreen,alerts}){
+function HomeScreen({cards,txns,setScreen,alerts,loadDemo}){
   const now=new Date(),thisM=MK(now.toISOString());
   const mTxns=txns.filter(t=>MK(t.date)===thisM);
   const totalDebt=cards.reduce((s,c)=>s+txns.filter(t=>t.cardId===c.id).reduce((a,t)=>a+t.amount,0),0);
@@ -1005,7 +873,8 @@ function HomeScreen({cards,txns,setScreen,alerts}){
         <div style={{margin:"0 20px 16px",padding:28,borderRadius:18,background:"var(--bg2)",border:"2px dashed var(--b2)",textAlign:"center"}}>
           <IC.Card style={{width:44,height:44,color:"var(--m)",margin:"0 auto 12px",display:"block"}}/>
           <p style={{fontSize:12,color:"var(--m)",marginBottom:12}}>Sin tarjetas registradas</p>
-          <button className="btn bp" style={{width:"auto",padding:"10px 18px",fontSize:13}} onClick={()=>setScreen("cards")}>Agregar tarjeta</button>
+          <button className="btn bp" style={{width:"auto",padding:"10px 18px",fontSize:13,marginBottom:8}} onClick={()=>setScreen("cards")}>Agregar tarjeta</button>
+          {loadDemo&&<button className="btn bs" style={{width:"auto",padding:"10px 18px",fontSize:12}} onClick={loadDemo}>Cargar datos de demostración</button>}
         </div>
       )}
 
@@ -1067,7 +936,7 @@ function HomeScreen({cards,txns,setScreen,alerts}){
 /* ══════════════════════════════════════════════════════════
    CARDS SCREEN
 ══════════════════════════════════════════════════════════ */
-function CardsScreen({cards,setCards,txns,toast}){
+function CardsScreen({cards,setCards,setTxns,txns,toast}){
   const[modal,setModal]=useState(null);
   const ef={bank:"Bancolombia",franchise:"Visa",name:"",last4:"",limit:"",cutDay:"22",payDay:"7",holder:"",theme:"teal"};
   const[form,setForm]=useState(ef);
@@ -1082,7 +951,7 @@ function CardsScreen({cards,setCards,txns,toast}){
     else{setCards(p=>p.map(c=>c.id===modal.id?{...c,...data}:c));toast("✓ Cambios guardados");}
     setModal(null);
   };
-  const del=id=>{if(!confirm("¿Eliminar esta tarjeta?"))return;setCards(p=>p.filter(c=>c.id!==id));toast("Tarjeta eliminada");setModal(null);};
+  const del=id=>{if(!confirm("¿Eliminar esta tarjeta y todos sus movimientos?"))return;setCards(p=>p.filter(c=>c.id!==id));setTxns(p=>p.filter(t=>t.cardId!==id));toast("Tarjeta y movimientos eliminados");setModal(null);};
 
   const prev={id:"__p",...{bank:form.bank,franchise:form.franchise,name:form.name||"NOMBRE",last4:form.last4||"0000",limit:+form.limit||1000000,theme:form.theme,holder:form.holder||"SU NOMBRE",cutDay:+form.cutDay||22,payDay:+form.payDay||7}};
 
@@ -1168,6 +1037,8 @@ function CardsScreen({cards,setCards,txns,toast}){
 function RegisterScreen({cards,txns,setTxns,toast}){
   const[tab,setTab]=useState("import");
   const[form,setForm]=useState({name:"",amount:"",cat:"Restaurantes",cardId:cards[0]?.id||"",date:TODAY(),cuotas:"1",note:""});
+  const[editTxn,setEditTxn]=useState(null);
+  const[editForm,setEditForm]=useState(null);
   const[dragOver,setDragOver]=useState(false);
   const[parsing,setParsing]=useState(false);
   const[parseRes,setParseRes]=useState([]);
@@ -1234,6 +1105,14 @@ function RegisterScreen({cards,txns,setTxns,toast}){
   };
 
   const delTxn=id=>{setTxns(p=>p.filter(t=>t.id!==id));toast("Movimiento eliminado");};
+  const openEdit=t=>{setEditTxn(t);setEditForm({name:t.name,amount:String(t.amount),cat:t.cat,cardId:t.cardId,date:t.date,cuotas:String(t.cuotas||1),note:t.note||""});};
+  const saveEdit=()=>{
+    if(!editForm?.name||!editForm?.amount||!editForm?.cardId){toast("Nombre, monto y tarjeta son obligatorios","error");return;}
+    const amt=+editForm.amount;if(isNaN(amt)||amt<=0){toast("Monto inválido","error");return;}
+    setTxns(p=>p.map(t=>t.id===editTxn.id?{...t,name:editForm.name,amount:amt,cat:editForm.cat,cardId:editForm.cardId,date:editForm.date,cuotas:+editForm.cuotas||1,note:editForm.note}:t));
+    toast("✓ Movimiento actualizado");setEditTxn(null);setEditForm(null);
+  };
+  const ef=k=>({value:editForm?.[k]||"",onChange:e=>setEditForm(p=>({...p,[k]:e.target.value}))});
   const sorted=[...txns].sort((a,b)=>new Date(b.date)-new Date(a.date));
 
   return(
@@ -1481,6 +1360,7 @@ function RegisterScreen({cards,txns,setTxns,toast}){
                       <p style={{fontSize:10,color:"var(--m)",marginTop:1}}>{card?`····${card.last4}`:"—"} · {FD(t.date)}{t.cuotas>1?` · ${t.cuotaNum}/${t.cuotas}`:""}</p>
                     </div>
                     <p style={{fontSize:13,fontWeight:700,color:"var(--rd)",flexShrink:0,marginRight:8}}>−{COP(t.amount)}</p>
+                    <button className="btn bi" style={{width:30,height:30,borderRadius:8,flexShrink:0,marginRight:4}} onClick={()=>openEdit(t)}><IC.Edit style={{width:13,height:13}}/></button>
                     <button className="btn bi" style={{width:30,height:30,borderRadius:8,flexShrink:0}} onClick={()=>delTxn(t.id)}><IC.Trash style={{width:13,height:13}}/></button>
                   </div>
                 );
@@ -1489,13 +1369,35 @@ function RegisterScreen({cards,txns,setTxns,toast}){
           )}
         </div>
       )}
+
+      {editTxn&&editForm&&(
+        <div className="ov" onClick={e=>e.target===e.currentTarget&&(setEditTxn(null),setEditForm(null))}>
+          <div className="sh">
+            <div className="hdl"/>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+              <h2 className="h2">Editar movimiento</h2>
+              <button className="btn bi" onClick={()=>{setEditTxn(null);setEditForm(null);}}><IC.X style={{width:16,height:16}}/></button>
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:13}}>
+              <div><label className="ilbl">COMERCIO *</label><input className="inp" {...ef("name")}/></div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11}}>
+                <div><label className="ilbl">MONTO *</label><input className="inp" type="number" {...ef("amount")}/></div>
+                <div><label className="ilbl">CUOTAS</label><input className="inp" type="number" min="1" {...ef("cuotas")}/></div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11}}>
+                <div><label className="ilbl">CATEGORÍA</label><select className="inp" {...ef("cat")}>{CATS.map(c=><option key={c}>{c}</option>)}</select></div>
+                <div><label className="ilbl">TARJETA *</label><select className="inp" {...ef("cardId")}>{cards.map(c=><option key={c.id} value={c.id}>{c.franchise} ····{c.last4}</option>)}</select></div>
+              </div>
+              <div><label className="ilbl">FECHA</label><input className="inp" type="date" {...ef("date")}/></div>
+              <div><label className="ilbl">NOTA</label><input className="inp" {...ef("note")}/></div>
+              <button className="btn bp" onClick={saveEdit}>Guardar cambios</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
-/* ══════════════════════════════════════════════════════════
-   ANALYTICS SCREEN
-══════════════════════════════════════════════════════════ */
 function AnalyticsScreen({cards,txns}){
   const[view,setView]=useState("overview");
   const now=new Date(),thisM=MK(now.toISOString());
@@ -1683,23 +1585,31 @@ function AnalyticsScreen({cards,txns}){
         <>
           <div style={{margin:"0 20px 14px",padding:18,borderRadius:18,background:"var(--bg2)",border:"1px solid var(--b1)"}}>
             <p className="lbl" style={{marginBottom:14}}>PLANIFICADOR DE PAGO</p>
+            {(()=>{
+              const monthlyRate=0.024;
+              const monthlyPay=Math.max(Math.round(totalDebt*0.15),totalDebt>0?100000:0);
+              const estMonths=totalDebt>0?Math.ceil(totalDebt/monthlyPay):0;
+              const monthlyInterest=Math.round(totalDebt*monthlyRate);
+              return(
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
               {[
                 {lb:"Deuda total",v:COP(totalDebt),cl:"var(--rd)"},
-                {lb:"Interés est. /mes",v:COP(Math.round(totalDebt*0.024)),cl:"var(--or)"},
-                {lb:"Meses estimados",v:totalDebt>0?`${Math.ceil(totalDebt/1800000)}`:"0",cl:"var(--tl)"},
-                {lb:"Ahorro potencial",v:COP(Math.round(totalDebt*0.024*8*0.3)),cl:"var(--gn)"},
+                {lb:"Interés est. /mes",v:COP(monthlyInterest),cl:"var(--or)"},
+                {lb:"Meses estimados",v:totalDebt>0?`${estMonths}`:"0",cl:"var(--tl)"},
+                {lb:"Pago sugerido/mes",v:COP(monthlyPay),cl:"var(--gn)"},
               ].map(m=><div key={m.lb} className="card3"><p style={{fontSize:9,color:"var(--m)",fontWeight:800,letterSpacing:".08em",marginBottom:4}}>{m.lb.toUpperCase()}</p><p style={{fontSize:14,fontWeight:900,color:m.cl}}>{m.v}</p></div>)}
             </div>
+              );
+            })()}
             <p className="lbl" style={{marginBottom:10}}>ESTRATEGIA AVALANCHA</p>
-            {cards.map((c,i)=>{const u=txns.filter(t=>t.cardId===c.id).reduce((s,t)=>s+t.amount,0);if(!u)return null;const p=PCT(u,c.limit);return(
+            {cards.map((c,i)=>{const u=txns.filter(t=>t.cardId===c.id).reduce((s,t)=>s+t.amount,0);if(!u)return null;const p=PCT(u,c.limit);const cardRate=u>5000000?0.028:0.022;return(
               <div key={c.id} style={{padding:"11px 0",borderBottom:i<cards.length-1?"1px solid var(--b1)":"none"}}>
                 <div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}>
                   <div style={{display:"flex",gap:6,alignItems:"center"}}><span className={`pill ${i===0?"prd":"ptl"}`} style={{fontSize:9}}>#{i+1}</span><span style={{fontSize:12,fontWeight:600}}>{c.franchise} ····{c.last4}</span></div>
                   <span style={{fontSize:12,fontWeight:800,color:p>70?"var(--rd)":"var(--tl)"}}>{COP(u)}</span>
                 </div>
                 <div className="bt"><div className="bf" style={{width:`${p}%`,background:p>70?"var(--rd)":"var(--tl)"}}/></div>
-                <p style={{fontSize:10,color:"var(--m)",marginTop:4}}>Sugerido: {COP(Math.max(Math.round(u*0.2),100000))} · Tasa aprox: 2.4% EM</p>
+                <p style={{fontSize:10,color:"var(--m)",marginTop:4}}>Sugerido: {COP(Math.max(Math.round(u*0.2),100000))} · Tasa aprox: {(cardRate*100).toFixed(1)}% EM</p>
               </div>
             );})}
           </div>
@@ -1716,6 +1626,7 @@ function CopilotoScreen({cards,txns}){
   const[msgs,setMsgs]=useState([{role:"ai",text:"¡Hola! Soy tu **Copiloto Financiero IA** 🤖\n\nAnalizo tus tarjetas y movimientos en tiempo real. Puedo:\n\n• Responder preguntas sobre tu situación financiera\n• Simular compras e impacto en tu cupo\n• Crear planes personalizados de pago\n• Predecir gastos con modelos ML\n• Recomendar qué tarjeta usar\n\n¿Cómo puedo ayudarte hoy?"}]);
   const[input,setInput]=useState("");
   const[loading,setLoading]=useState(false);
+  const[apiStatus,setApiStatus]=useState("checking");
   const endRef=useRef(null);
 
   const SUGG=["¿Cuánto debo pagar esta semana?","¿Qué tarjeta conviene para $500K?","Simula $2M a 6 cuotas","Plan para salir de deuda","¿Cuánto gastaré este mes?","Analiza mis anomalías"];
@@ -1757,19 +1668,35 @@ Responde en español, sé directo y práctico. Usa pesos colombianos (COP/$). M�
     setInput("");setLoading(true);
     try{
       const history=msgs.slice(-8).map(m=>({role:m.role==="ai"?"assistant":"user",content:m.text}));
-      const res=await fetch("https://api.anthropic.com/v1/messages",{
+      const res=await fetch("/api/copilot",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:1000,system:ctx(),messages:[...history,{role:"user",content:msg}]})
+        body:JSON.stringify({model:"openai/gpt-oss-120b",max_tokens:1000,system:ctx(),messages:[...history,{role:"user",content:msg}]})
       });
       const data=await res.json();
-      const reply=data.content?.find(b=>b.type==="text")?.text||"Sin respuesta del servidor.";
-      setMsgs(p=>[...p,{role:"ai",text:reply}]);
+      if(!res.ok){
+        setApiStatus("error");
+        setMsgs(p=>[...p,{role:"ai",text:`⚠️ ${data.error||"Error del servidor (${res.status})"}`}]);
+      }else{
+        setApiStatus("connected");
+        const reply=data.reply||"Sin respuesta del servidor.";
+        setMsgs(p=>[...p,{role:"ai",text:reply}]);
+      }
     }catch{
-      setMsgs(p=>[...p,{role:"ai",text:"⚠️ Error de conexión. Verifica tu acceso a internet."}]);
+      setApiStatus("error");
+      setMsgs(p=>[...p,{role:"ai",text:"⚠️ Error de conexión. Verifica tu acceso a internet y que GROQ_API_KEY esté configurada."}]);
     }
     setLoading(false);
   };
+
+  useEffect(()=>{
+    fetch("/api/copilot",{method:"OPTIONS"})
+      .then(r=>setApiStatus(r.ok||r.status===204?"connected":"error"))
+      .catch(()=>setApiStatus("error"));
+  },[]);
+
+  const statusLabel=apiStatus==="checking"?"Verificando conexión…":apiStatus==="connected"?"● Conectado · Análisis en tiempo real":"● Sin conexión · Revisa configuración";
+  const statusColor=apiStatus==="connected"?"var(--tl)":apiStatus==="checking"?"var(--or)":"var(--rd)";
 
   useEffect(()=>{endRef.current?.scrollIntoView({behavior:"smooth"});},[msgs,loading]);
 
@@ -1779,7 +1706,7 @@ Responde en español, sé directo y práctico. Usa pesos colombianos (COP/$). M�
         <div style={{width:46,height:46,borderRadius:15,background:"linear-gradient(135deg,var(--tl),var(--tl2))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0,animation:"gl 2.5s ease-in-out infinite"}}>🤖</div>
         <div>
           <p style={{fontSize:15,fontWeight:800}}>Copiloto IA</p>
-          <p style={{fontSize:10,color:"var(--tl)",fontWeight:700}}>● Conectado · Análisis en tiempo real</p>
+          <p style={{fontSize:10,color:statusColor,fontWeight:700}}>{statusLabel}</p>
         </div>
         <span className="pill ptl" style={{marginLeft:"auto",fontSize:9}}>ML activo</span>
       </div>
@@ -1856,39 +1783,15 @@ function AlertsScreen({alerts,setAlerts,setScreen}){
 }
 
 /* ══════════════════════════════════════════════════════════
-   ALERT GENERATOR
-══════════════════════════════════════════════════════════ */
-function genAlerts(cards,txns){
-  const now=new Date();const alerts=[];
-  cards.forEach(c=>{
-    const u=txns.filter(t=>t.cardId===c.id).reduce((s,t)=>s+t.amount,0);
-    const p=PCT(u,c.limit);
-    let dp=c.payDay-now.getDate();if(dp<0)dp+=30;
-    let dc=c.cutDay-now.getDate();if(dc<0)dc+=30;
-    if(p>85) alerts.push({id:`u3-${c.id}`,type:"danger",icon:"🚨",title:`${c.franchise} ····${c.last4} al ${p}%`,body:`Cupo casi agotado en ${c.bank}. Riesgo de denegación de transacciones.`,dismissed:false});
-    else if(p>65) alerts.push({id:`u2-${c.id}`,type:"warning",icon:"⚠️",title:`${c.franchise} ····${c.last4} al ${p}%`,body:`Uso elevado del cupo. Impacta tu score financiero. Ideal mantenerse bajo 60%.`,dismissed:false});
-    if(dp<=5) alerts.push({id:`pay-${c.id}`,type:"danger",icon:"📅",title:`Pago vence en ${dp} días`,body:`${c.bank} ${c.franchise} ····${c.last4} vence el día ${c.payDay}. Deuda: ${COP(u)}.`,dismissed:false});
-    if(dc<=3) alerts.push({id:`cut-${c.id}`,type:"warning",icon:"✂️",title:`Corte en ${dc} días`,body:`${c.bank} ····${c.last4} cierra el día ${c.cutDay}. Acumulado: ${COP(u)}.`,dismissed:false});
-  });
-  const thisM=MK(now.toISOString());
-  const subs=txns.filter(t=>t.cat==="Suscripciones"&&MK(t.date)===thisM);
-  if(subs.length>0) alerts.push({id:"subs",type:"info",icon:"📺",title:`${subs.length} suscripciones este mes`,body:`Total: ${COP(subs.reduce((s,t)=>s+t.amount,0))}. Revisa si todas son necesarias.`,dismissed:false});
-  const rMin=ML.riskMin(cards,txns);
-  if(rMin>65) alerts.push({id:"riskML",type:"danger",icon:"🤖",title:`ML: ${rMin}% riesgo pago mínimo`,body:"El modelo detecta alta probabilidad de que solo puedas cubrir el pago mínimo este mes.",dismissed:false});
-  if(!alerts.length) alerts.push({id:"ok",type:"success",icon:"✅",title:"Finanzas en orden",body:"Todo bajo control. ¡Sigue con el buen ritmo!",dismissed:false});
-  return alerts;
-}
-
-/* ══════════════════════════════════════════════════════════
    ROOT
 ══════════════════════════════════════════════════════════ */
 export default function App(){
-  const[cards,setCards,cr]=useStore("cfv6_cards",SEED.cards);
-  const[txns,setTxns,tr]=useStore("cfv6_txns",SEED.txns);
+  const { user, ready: authReady, signIn, signUp, signOut, supabaseEnabled } = useAuth();
+  const [guestMode, setGuestMode] = useState(() => localStorage.getItem("cfv6_guest") === "1");
+  const { cards, setCards, txns, setTxns, disIds, setDisIds, ready: dataReady, loadDemo } = useDataStore(user);
   const[screen,setScreen]=useState("home");
   const[toastD,setToastD]=useState(null);
   const toast=(msg,type="success")=>setToastD({msg,type});
-  const[disIds,setDisIds]=useStore("cfv6_dis",[]);
 
   const rawAlerts=useMemo(()=>genAlerts(cards,txns),[cards,txns]);
   const alerts=rawAlerts.map(a=>({...a,dismissed:disIds.includes(a.id)}));
@@ -1896,7 +1799,12 @@ export default function App(){
   const TABS=["home","cards","registrar","analytics","copiloto"];
   const activeTab=TABS.includes(screen)?screen:"home";
 
-  if(!cr||!tr) return(
+  const handleSkipAuth=()=>{localStorage.setItem("cfv6_guest","1");setGuestMode(true);};
+  const handleLoadDemo=async()=>{await loadDemo();toast("✓ Datos de demostración cargados");};
+
+  const showAuth=supabaseEnabled&&!user&&!guestMode;
+
+  if(!authReady||(!showAuth&&!dataReady)) return(
     <>
       <style>{CSS}</style>
       <div className="app" style={{alignItems:"center",justifyContent:"center"}}>
@@ -1904,6 +1812,15 @@ export default function App(){
           <div style={{width:44,height:44,borderRadius:"50%",border:"3px solid var(--tl)",borderTopColor:"transparent",margin:"0 auto 14px",animation:"sp .75s linear infinite"}}/>
           <p style={{color:"var(--m)",fontSize:12,fontWeight:600}}>Cargando…</p>
         </div>
+      </div>
+    </>
+  );
+
+  if(showAuth) return(
+    <>
+      <style>{CSS}</style>
+      <div className="app">
+        <AuthScreen signIn={signIn} signUp={signUp} supabaseEnabled={supabaseEnabled} onSkip={handleSkipAuth}/>
       </div>
     </>
   );
@@ -1918,16 +1835,19 @@ export default function App(){
         {/* Status bar */}
         <div className="sb">
           <span style={{fontFamily:"var(--mo)",fontSize:11,fontWeight:700}}>{time}</span>
-          <div style={{display:"flex",gap:5,alignItems:"center",color:"var(--s)",fontSize:12}}>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            {user&&<button className="btn bg" style={{fontSize:9,padding:"4px 8px"}} onClick={signOut}>Salir</button>}
+            <div style={{display:"flex",gap:5,alignItems:"center",color:"var(--s)",fontSize:12}}>
             <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="6" width="3" height="6"/><rect x="4.5" y="4" width="3" height="8"/><rect x="9" y="2" width="3" height="10"/><rect x="13.5" y="0" width="2.5" height="12"/></svg>
             <svg width="22" height="12" viewBox="0 0 22 12" fill="currentColor"><rect x="0" y="1" width="18" height="10" rx="2" fill="none" stroke="currentColor" strokeWidth="1.2"/><rect x="1.5" y="2.5" width="12" height="7" rx="1" fill="currentColor"/><path d="M19 4.5v3a1.5 1.5 0 000-3z"/></svg>
+            </div>
           </div>
         </div>
 
         {toastD&&<Toast msg={toastD.msg} type={toastD.type} onDone={()=>setToastD(null)}/>}
 
-        {screen==="home"&&<HomeScreen cards={cards} txns={txns} setScreen={setScreen} alerts={alerts}/>}
-        {screen==="cards"&&<CardsScreen cards={cards} setCards={setCards} txns={txns} toast={toast}/>}
+        {screen==="home"&&<HomeScreen cards={cards} txns={txns} setScreen={setScreen} alerts={alerts} loadDemo={handleLoadDemo}/>}
+        {screen==="cards"&&<CardsScreen cards={cards} setCards={setCards} setTxns={setTxns} txns={txns} toast={toast}/>}
         {screen==="registrar"&&<RegisterScreen cards={cards} txns={txns} setTxns={setTxns} toast={toast}/>}
         {screen==="analytics"&&<AnalyticsScreen cards={cards} txns={txns}/>}
         {screen==="copiloto"&&<CopilotoScreen cards={cards} txns={txns}/>}

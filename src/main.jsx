@@ -2,15 +2,29 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 
-// Polyfill storage for non-Claude environments
+// localStorage-backed storage (persists across page reloads)
 if (!window.storage) {
-  const store = {};
   window.storage = {
-    get: async (key) => store[key] ? { key, value: store[key] } : null,
-    set: async (key, value) => { store[key] = value; return { key, value }; },
-    delete: async (key) => { delete store[key]; return { key, deleted: true }; },
-    list: async (prefix) => ({ keys: Object.keys(store).filter(k => !prefix || k.startsWith(prefix)) }),
-  };
+    get: async (key) => {
+      try {
+        const value = localStorage.getItem(key)
+        return value !== null ? { key, value } : null
+      } catch {
+        return null
+      }
+    },
+    set: async (key, value) => {
+      localStorage.setItem(key, value)
+      return { key, value }
+    },
+    delete: async (key) => {
+      localStorage.removeItem(key)
+      return { key, deleted: true }
+    },
+    list: async (prefix) => ({
+      keys: Object.keys(localStorage).filter(k => !prefix || k.startsWith(prefix)),
+    }),
+  }
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
