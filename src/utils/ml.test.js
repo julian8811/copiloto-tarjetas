@@ -53,3 +53,12 @@ describe('ML.predictEnd', () => {
     expect(ML.predictEnd(sampleTxns)).toBeGreaterThanOrEqual(0)
   })
 })
+
+describe('ML.monthlyData', () => {
+  it('returns month labels without throwing', () => {
+    const data = ML.monthlyData(sampleTxns, 3)
+    expect(data).toHaveLength(3)
+    expect(data[0]).toHaveProperty('mes')
+    expect(typeof data[0].mes).toBe('string')
+  })
+})

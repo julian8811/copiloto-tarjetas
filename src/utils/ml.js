@@ -1,4 +1,4 @@
-import { CATS, PCT, MK } from './constants.js'
+import { CATS, PCT, MK, MNAMES } from './constants.js'
 
 export const ML = {
   linReg(pts) {
