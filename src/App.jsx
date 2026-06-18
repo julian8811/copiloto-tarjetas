@@ -52,6 +52,48 @@ html,body{height:100%;background:#020810;overflow:hidden}
   position:relative;overflow:hidden;
   box-shadow:0 0 0 1px var(--b1),0 40px 120px rgba(0,0,0,.9)
 }
+.main-col{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;overflow:hidden}
+.sidebar{display:none;flex-direction:column;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--b1)}
+.sb-brand-block{padding:22px 18px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:11px}
+.sb-brand-block h2{font-size:15px;font-weight:800;color:var(--tl);line-height:1.15}
+.sb-brand-block p{font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--m)}
+.sb-nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:3px;overflow-y:auto}
+.sb-item{display:flex;align-items:center;gap:11px;width:100%;padding:11px 14px;border:none;border-radius:12px;
+  background:none;cursor:pointer;color:var(--m);font-family:var(--fn);font-size:13px;font-weight:700;
+  transition:all .2s;text-align:left;position:relative}
+.sb-item:hover{color:var(--d);background:rgba(255,255,255,0.03)}
+.sb-item.on{color:var(--tl);background:rgba(0,223,200,0.08)}
+.sb-item svg{width:20px;height:20px;stroke-width:1.7;flex-shrink:0}
+.sb-item .ndot{top:10px;right:12px}
+.sb-foot{padding:14px 18px;border-top:1px solid var(--b1);font-size:10px;color:var(--m);line-height:1.5}
+.px{padding-left:20px;padding-right:20px}
+.page-pad{padding:0 20px 16px}
+.mx{margin-left:20px;margin-right:20px}
+.mx-m{margin:0 20px 14px}
+.mx-b{margin:0 20px 16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.g4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.chart-box{margin:0 20px 16px;padding:14px 10px;border-radius:18px;background:var(--bg2);border:1px solid var(--b1)}
+.chart-h{height:130px}
+.hero-kpi{margin:0 20px 16px;padding:20px 22px;border-radius:22px;background:linear-gradient(140deg,#030f1e,#061c18);
+  border:1px solid rgba(0,223,200,0.1);position:relative;overflow:hidden}
+.cards-row{display:flex;gap:11px;overflow-x:auto;padding:2px 20px 14px;
+  -webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory}
+.cards-row::-webkit-scrollbar{display:none}
+.cards-row>*{scroll-snap-align:start;flex-shrink:0}
+.cards-page-grid{display:flex;flex-direction:column;gap:0}
+.card-entry{margin:0 20px 18px}
+.cc-vis{min-width:min(100%,280px);width:100%}
+.dash-split{display:block}
+.analytics-pair{display:block}
+.copilot-scr{display:flex;flex-direction:column;height:100%;padding-bottom:0}
+.copilot-msgs{flex:1;overflow-y:auto;padding:0 20px 10px;display:flex;flex-direction:column;gap:10px}
+.copilot-foot{flex-shrink:0;padding:10px 20px 88px;border-top:1px solid var(--b1);background:var(--bg);display:flex;gap:9}
+.tab-row{display:flex;gap:6;padding:0 20px 18px;flex-wrap:nowrap}
+.tab-btn{flex:1;padding:9px 4px;border-radius:11px;background:var(--bg3);border:1px solid var(--b1);
+  color:var(--s);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--fn);transition:all .15s;min-width:0}
+.tab-btn.on{background:var(--tlb);border-color:var(--tlbr);color:var(--tl)}
 .glass{background:rgba(11,18,30,0.6);backdrop-filter:blur(12px);border:1px solid var(--b1)}
 .neon{box-shadow:0 0 12px rgba(0,255,209,0.3)}
 .brand-logo{width:28px;height:28px;border-radius:8px;object-fit:cover;border:1px solid var(--tlbr)}
@@ -186,6 +228,68 @@ select.inp{appearance:none;cursor:pointer}
   font-size:8px;font-weight:800;color:#fff;display:flex;
   align-items:center;justify-content:center;padding:0 3px}
 .ring{position:relative;display:inline-flex;align-items:center;justify-content:center}
+
+/* RESPONSIVE */
+@media(min-width:480px){
+  .g4{grid-template-columns:repeat(2,1fr)}
+}
+@media(min-width:768px){
+  html,body{overflow:auto}
+  .sidebar .sb-brand-block{display:flex}
+  .main-col .sb .sb-brand{display:none}
+  #root{align-items:stretch;min-height:100vh;height:auto;padding:0;
+    background:radial-gradient(ellipse 90% 40% at 20% -5%,rgba(0,224,183,0.06),transparent),var(--bg)}
+  .app{width:100%;max-width:none;height:100vh;min-height:100vh;flex-direction:row;
+    box-shadow:none;border-radius:0}
+  .sidebar{display:flex;width:220px}
+  .main-col{height:100vh}
+  .nav{display:none}
+  .scr{padding-bottom:28px}
+  .sb{height:60px;padding:0 clamp(20px,3vw,36px)}
+  .hdr,.sec{padding-left:clamp(20px,3vw,36px);padding-right:clamp(20px,3vw,36px)}
+  .px,.page-pad{padding-left:clamp(20px,3vw,36px);padding-right:clamp(20px,3vw,36px)}
+  .mx,.mx-m,.mx-b,.chart-box,.hero-kpi,.card-entry{margin-left:clamp(20px,3vw,36px);margin-right:clamp(20px,3vw,36px)}
+  .cards-row{padding-left:clamp(20px,3vw,36px);padding-right:clamp(20px,3vw,36px)}
+  .tab-row{padding-left:clamp(20px,3vw,36px);padding-right:clamp(20px,3vw,36px)}
+  .copilot-msgs,.copilot-foot{padding-left:clamp(20px,3vw,36px);padding-right:clamp(20px,3vw,36px)}
+  .h1{font-size:30px}
+  .h2{font-size:22px}
+  .toast{top:68px;left:50%;right:auto;transform:translateX(-50%);max-width:440px;width:min(440px,90%)}
+  .ov{align-items:center;justify-content:center;padding:24px}
+  .sh{max-width:540px;border-radius:24px;max-height:90vh;margin:0 auto;border:1px solid var(--b2);
+    animation:fu .28s ease both}
+  .hdl{display:none}
+  .chart-h{height:200px}
+  .cards-row.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    overflow:visible;gap:16px;padding-bottom:20px}
+  .cards-row.cards-grid>*{flex-shrink:unset;scroll-snap-align:unset}
+  .cc-vis{min-width:0}
+  .dash-split{display:grid;grid-template-columns:1.15fr 1fr;gap:18px;
+    margin:0 clamp(20px,3vw,36px) 20px;align-items:start}
+  .dash-split .chart-box{margin:0}
+  .dash-split .card{margin:0}
+  .analytics-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;
+    margin:0 clamp(20px,3vw,36px) 16px;align-items:start}
+  .analytics-pair>*{margin:0!important}
+  .cards-page-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+    gap:20px;padding:0 clamp(20px,3vw,36px) 24px}
+  .card-entry{margin:0}
+  .copilot-foot{padding-bottom:24px;max-width:860px;margin:0 auto;width:100%}
+  .copilot-msgs{max-width:860px;margin:0 auto;width:100%}
+  .copilot-scr .hs{flex-wrap:wrap;padding-bottom:16px}
+  .g4.ml-stats{grid-template-columns:repeat(4,1fr);padding-left:clamp(20px,3vw,36px);
+    padding-right:clamp(20px,3vw,36px)}
+  .auth-inner{max-width:420px;margin:0 auto;padding:40px 24px}
+  .main-col:has(.auth-inner){justify-content:center}
+}
+@media(min-width:1024px){
+  .sidebar{width:248px}
+  .chart-h{height:230px}
+  .g4:not(.ml-stats){grid-template-columns:repeat(2,1fr)}
+}
+@media(min-width:1280px){
+  .main-col>.scr,.main-col>.copilot-scr{max-width:1100px;margin:0 auto;width:100%}
+}
 
 /* ANIMATIONS */
 @keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -352,7 +456,7 @@ function CCVis({ card, txns, onClick, noAnim }) {
   const p = PCT(used, card.limit);
   const rclr = p>80?"var(--rd)":p>65?"var(--or)":theme.acc;
   return (
-    <div onClick={onClick} style={{background:theme.bg,borderRadius:22,padding:"22px 24px",position:"relative",overflow:"hidden",cursor:onClick?"pointer":"default",minWidth:300,transition:"transform .2s"}}
+    <div onClick={onClick} className="cc-vis" style={{background:theme.bg,borderRadius:22,padding:"22px 24px",position:"relative",overflow:"hidden",cursor:onClick?"pointer":"default",transition:"transform .2s"}}
       onMouseEnter={e=>{if(!noAnim)e.currentTarget.style.transform="scale(1.015)"}}
       onMouseLeave={e=>{if(!noAnim)e.currentTarget.style.transform="scale(1)"}}>
       {/* Glow blobs */}
@@ -820,17 +924,17 @@ function HomeScreen({cards,txns,setScreen,alerts,loadDemo}){
       </div>
 
       {/* KPI hero */}
-      <div style={{margin:"0 20px 16px",padding:"20px 22px",borderRadius:22,background:"linear-gradient(140deg,#030f1e,#061c18)",border:"1px solid rgba(0,223,200,0.1)",position:"relative",overflow:"hidden"}}>
+      <div className="hero-kpi">
         <div style={{position:"absolute",top:-60,right:-50,width:200,height:200,borderRadius:"50%",background:`radial-gradient(circle,${rc}0f,transparent)`,pointerEvents:"none"}}/>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14,position:"relative"}}>
-          <div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14,position:"relative",flexWrap:"wrap",gap:12}}>
+          <div style={{flex:1,minWidth:180}}>
             <p className="lbl" style={{marginBottom:5}}>DEUDA TOTAL</p>
-            <div style={{fontSize:34,fontWeight:900,color:rc,letterSpacing:"-.03em"}}>{COP(totalDebt)}</div>
+            <div style={{fontSize:"clamp(26px,4vw,34px)",fontWeight:900,color:rc,letterSpacing:"-.03em"}}>{COP(totalDebt)}</div>
             <p style={{fontSize:11,color:"var(--m)",marginTop:4}}>de {COP(totalLimit)} · {op}% usado</p>
           </div>
           <ScoreRing score={score} sz={82}/>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+        <div className="g3">
           {[
             {lb:"ESTE MES",v:COP(mSpend),cl:"var(--t)"},
             {lb:"PRED. ML",v:COP(predicted),cl:predicted>mSpend*1.15?"var(--rd)":"var(--tl)"},
@@ -846,7 +950,7 @@ function HomeScreen({cards,txns,setScreen,alerts,loadDemo}){
 
       {/* Risk alert */}
       {riskMin>55&&(
-        <div style={{margin:"0 20px 14px",padding:"11px 14px",borderRadius:14,background:"var(--vib)",border:"1px solid var(--vibr)",display:"flex",gap:10,alignItems:"flex-start",cursor:"pointer"}} onClick={()=>setScreen("copiloto")}>
+        <div className="mx-m" style={{padding:"11px 14px",borderRadius:14,background:"var(--vib)",border:"1px solid var(--vibr)",display:"flex",gap:10,alignItems:"flex-start",cursor:"pointer"}} onClick={()=>setScreen("copiloto")}>
           <span style={{fontSize:18}}>🤖</span>
           <div style={{flex:1}}>
             <p style={{fontSize:11,fontWeight:800,color:"var(--vi)",marginBottom:2}}>IA · RIESGO DETECTADO</p>
@@ -857,7 +961,7 @@ function HomeScreen({cards,txns,setScreen,alerts,loadDemo}){
 
       {/* Alert strip */}
       {activeAlerts.slice(0,1).map(a=>(
-        <div key={a.id} style={{margin:"0 20px 14px",padding:"11px 14px",borderRadius:13,background:a.type==="danger"?"var(--rdb)":"var(--orb)",border:`1px solid ${a.type==="danger"?"var(--rdbr)":"var(--orbr)"}`,display:"flex",gap:9,cursor:"pointer"}} onClick={()=>setScreen("alerts")}>
+        <div key={a.id} className="mx-m" style={{padding:"11px 14px",borderRadius:13,background:a.type==="danger"?"var(--rdb)":"var(--orb)",border:`1px solid ${a.type==="danger"?"var(--rdbr)":"var(--orbr)"}`,display:"flex",gap:9,cursor:"pointer"}} onClick={()=>setScreen("alerts")}>
           <span style={{fontSize:16}}>{a.icon}</span>
           <div style={{flex:1}}>
             <p style={{fontSize:12,fontWeight:700,color:a.type==="danger"?"var(--rd)":"var(--or)"}}>{a.title}</p>
@@ -873,11 +977,11 @@ function HomeScreen({cards,txns,setScreen,alerts,loadDemo}){
         <button className="btn bg" onClick={()=>setScreen("cards")}>Gestionar</button>
       </div>
       {cards.length>0?(
-        <div className="hs" style={{padding:"2px 20px 14px"}}>
+        <div className="hs cards-row cards-grid">
           {cards.map(c=><CCVis key={c.id} card={c} txns={txns}/>)}
         </div>
       ):(
-        <div style={{margin:"0 20px 16px",padding:28,borderRadius:18,background:"var(--bg2)",border:"2px dashed var(--b2)",textAlign:"center"}}>
+        <div className="mx-b" style={{padding:28,borderRadius:18,background:"var(--bg2)",border:"2px dashed var(--b2)",textAlign:"center"}}>
           <IC.Card style={{width:44,height:44,color:"var(--m)",margin:"0 auto 12px",display:"block"}}/>
           <p style={{fontSize:12,color:"var(--m)",marginBottom:12}}>Sin tarjetas registradas</p>
           <button className="btn bp" style={{width:"auto",padding:"10px 18px",fontSize:13,marginBottom:8}} onClick={()=>setScreen("cards")}>Agregar tarjeta</button>
@@ -886,12 +990,15 @@ function HomeScreen({cards,txns,setScreen,alerts,loadDemo}){
       )}
 
       {/* ML chart */}
+      <div className="dash-split">
+      <div>
       <div className="sec">
         <p className="lbl">TENDENCIA + ML</p>
         <span className="pill ptl" style={{fontSize:9}}>predicción →</span>
       </div>
-      <div style={{margin:"0 20px 16px",padding:"14px 10px",borderRadius:18,background:"var(--bg2)",border:"1px solid var(--b1)"}}>
-        <ResponsiveContainer width="100%" height={130}>
+      <div className="chart-box">
+        <div className="chart-h">
+        <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={predData} margin={{top:4,right:4,left:0,bottom:0}}>
             <defs>
               <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
@@ -907,18 +1014,21 @@ function HomeScreen({cards,txns,setScreen,alerts,loadDemo}){
               strokeDasharray="0"/>
           </AreaChart>
         </ResponsiveContainer>
-        <div style={{display:"flex",gap:16,justifyContent:"center",marginTop:4}}>
+        </div>
+        <div style={{display:"flex",gap:16,justifyContent:"center",marginTop:4,flexWrap:"wrap"}}>
           <div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:10,height:3,background:"#00dfc8",borderRadius:2}}/><span style={{fontSize:9,color:"var(--m)",fontWeight:700}}>Real</span></div>
           <div style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:10,height:10,borderRadius:"50%",background:"#9b6fff"}}/><span style={{fontSize:9,color:"var(--m)",fontWeight:700}}>Predicción ML</span></div>
         </div>
       </div>
+      </div>
 
       {/* Recent txns */}
+      <div>
       <div className="sec">
         <p className="lbl">ÚLTIMOS MOVIMIENTOS</p>
         <button className="btn bg" onClick={()=>setScreen("registrar")}>Ver todos</button>
       </div>
-      <div className="card" style={{margin:"0 20px 24px",padding:0,overflow:"hidden"}}>
+      <div className="card" style={{padding:0,overflow:"hidden"}}>
         {recent.length===0?<div style={{padding:24,textAlign:"center"}}><p style={{fontSize:12,color:"var(--m)"}}>Sin movimientos aún</p></div>:recent.map(t=>{
           const card=cards.find(c=>c.id===t.cardId);
           return(
@@ -935,6 +1045,8 @@ function HomeScreen({cards,txns,setScreen,alerts,loadDemo}){
             </div>
           );
         })}
+      </div>
+      </div>
       </div>
     </div>
   );
@@ -975,14 +1087,16 @@ function CardsScreen({cards,setCards,setTxns,txns,toast}){
           <p style={{fontSize:12,color:"var(--m)",marginBottom:20}}>Agrega tu primera tarjeta de crédito</p>
           <button className="btn bp" onClick={openAdd}>Agregar tarjeta</button>
         </div>
-      ):cards.map(card=>{
+      ):(
+      <div className="cards-page-grid">
+      {cards.map(card=>{
         const used=txns.filter(t=>t.cardId===card.id).reduce((s,t)=>s+t.amount,0);
         const minP=Math.max(Math.round(used*0.05),50000);
         const now=new Date();let dp=card.payDay-now.getDate();if(dp<0)dp+=30;
         return(
-          <div key={card.id} style={{margin:"0 20px 18px"}}>
+          <div key={card.id} className="card-entry">
             <CCVis card={card} txns={txns} noAnim/>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginTop:10}}>
+            <div className="g3" style={{marginTop:10}}>
               {[{lb:"Pago mínimo",v:COP(minP),cl:"var(--or)"},{lb:"Pago total",v:COP(used),cl:"var(--tl)"},{lb:`Vence en ${dp}d`,v:`Día ${card.payDay}`,cl:dp<=3?"var(--rd)":"var(--d)"}]
                 .map(m=><div key={m.lb} className="card3"><p style={{fontSize:9,color:"var(--m)",fontWeight:800,letterSpacing:".08em",marginBottom:4}}>{m.lb.toUpperCase()}</p><p style={{fontSize:13,fontWeight:800,color:m.cl}}>{m.v}</p></div>)}
             </div>
@@ -993,6 +1107,8 @@ function CardsScreen({cards,setCards,setTxns,txns,toast}){
           </div>
         );
       })}
+      </div>
+      )}
 
       {modal&&(
         <div className="ov" onClick={e=>e.target===e.currentTarget&&setModal(null)}>
@@ -1015,16 +1131,16 @@ function CardsScreen({cards,setCards,setTxns,txns,toast}){
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
               <div><label className="ilbl">BANCO</label><select className="inp" {...f("bank")}>{BANKS.map(b=><option key={b}>{b}</option>)}</select></div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11}}>
+              <div className="g2">
                 <div><label className="ilbl">FRANQUICIA</label><select className="inp" {...f("franchise")}>{FRAN.map(fr=><option key={fr}>{fr}</option>)}</select></div>
                 <div><label className="ilbl">NOMBRE</label><input className="inp" placeholder="Gold, Infinite…" {...f("name")}/></div>
               </div>
               <div><label className="ilbl">TITULAR</label><input className="inp" placeholder="JUAN PÉREZ" {...f("holder")}/></div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11}}>
+              <div className="g2">
                 <div><label className="ilbl">4 ÚLTIMOS DÍGITOS *</label><input className="inp" placeholder="0000" maxLength={4} {...f("last4")}/></div>
                 <div><label className="ilbl">CUPO TOTAL (COP) *</label><input className="inp" type="number" placeholder="10000000" {...f("limit")}/></div>
               </div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11}}>
+              <div className="g2">
                 <div><label className="ilbl">DÍA CORTE</label><input className="inp" type="number" min={1} max={31} {...f("cutDay")}/></div>
                 <div><label className="ilbl">DÍA PAGO LÍMITE</label><input className="inp" type="number" min={1} max={31} {...f("payDay")}/></div>
               </div>
@@ -1128,15 +1244,15 @@ function RegisterScreen({cards,txns,setTxns,toast}){
         FILE INPUT: rendered at top level of component, OUTSIDE drop zone and any
         overflow:hidden container. Uses <label> pattern — 100% reliable cross-browser.
       */}
-      <div style={{padding:"0 20px 16px"}}>
+      <div className="page-pad">
         <p className="lbl" style={{marginBottom:3}}>GASTOS</p>
         <h1 className="h1">Registrar</h1>
       </div>
 
       {/* Tabs */}
-      <div style={{display:"flex",gap:6,padding:"0 20px 18px"}}>
+      <div className="tab-row">
         {[["import","📤 Importar"],["manual","✏️ Manual"],["list","📋 Historial"]].map(([id,lbl])=>(
-          <button key={id} onClick={()=>setTab(id)} style={{flex:1,padding:"9px 4px",borderRadius:11,background:tab===id?"var(--tlb)":"var(--bg3)",border:`1px solid ${tab===id?"var(--tlbr)":"var(--b1)"}`,color:tab===id?"var(--tl)":"var(--s)",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"var(--fn)",transition:"all .15s"}}>
+          <button key={id} onClick={()=>setTab(id)} className={`tab-btn${tab===id?" on":""}`}>
             {lbl}
           </button>
         ))}
@@ -1144,7 +1260,7 @@ function RegisterScreen({cards,txns,setTxns,toast}){
 
       {/* ────── IMPORT ────── */}
       {tab==="import"&&(
-        <div style={{padding:"0 20px"}}>
+        <div className="px">
           {/* Card selector */}
           <div style={{marginBottom:16}}>
             <label className="ilbl" htmlFor="card-sel-imp">ASIGNAR MOVIMIENTOS A TARJETA</label>
@@ -1292,7 +1408,7 @@ function RegisterScreen({cards,txns,setTxns,toast}){
           {!parseRes.length&&!parsing&&(
             <div style={{marginTop:8}}>
               <p className="lbl" style={{marginBottom:12}}>ESTRUCTURA RECOMENDADA</p>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+              <div className="g4">
                 {[
                   ["📊","Excel / CSV","Columnas: Fecha · Descripción · Valor. Se auto-detectan."],
                   ["📑","PDF","Extractos bancarios — se extraen montos y nombres."],
@@ -1313,7 +1429,7 @@ function RegisterScreen({cards,txns,setTxns,toast}){
 
       {/* ────── MANUAL ────── */}
       {tab==="manual"&&(
-        <div style={{padding:"0 20px"}}>
+        <div className="px">
           {cards.length===0?(
             <div style={{textAlign:"center",padding:"40px 0"}}>
               <IC.Card style={{width:44,height:44,color:"var(--m)",margin:"0 auto 14px",display:"block"}}/>
@@ -1323,11 +1439,11 @@ function RegisterScreen({cards,txns,setTxns,toast}){
           ):(
             <div style={{display:"flex",flexDirection:"column",gap:13}}>
               <div><label className="ilbl">COMERCIO / DESCRIPCIÓN *</label><input className="inp" placeholder="Ej: Restaurante El Corral" {...f("name")}/></div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11}}>
+              <div className="g2">
                 <div><label className="ilbl">MONTO (COP) *</label><input className="inp" type="number" placeholder="89000" {...f("amount")}/></div>
                 <div><label className="ilbl">CUOTAS</label><select className="inp" {...f("cuotas")}>{[1,2,3,6,9,12,18,24,36,48].map(n=><option key={n} value={n}>{n===1?"Contado":`${n} cuotas`}</option>)}</select></div>
               </div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11}}>
+              <div className="g2">
                 <div><label className="ilbl">CATEGORÍA</label><select className="inp" {...f("cat")}>{CATS.map(c=><option key={c}>{c}</option>)}</select></div>
                 <div><label className="ilbl">TARJETA *</label><select className="inp" {...f("cardId")}>{cards.map(c=><option key={c.id} value={c.id}>{c.franchise} ····{c.last4}</option>)}</select></div>
               </div>
@@ -1387,11 +1503,11 @@ function RegisterScreen({cards,txns,setTxns,toast}){
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:13}}>
               <div><label className="ilbl">COMERCIO *</label><input className="inp" {...ef("name")}/></div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11}}>
+              <div className="g2">
                 <div><label className="ilbl">MONTO *</label><input className="inp" type="number" {...ef("amount")}/></div>
                 <div><label className="ilbl">CUOTAS</label><input className="inp" type="number" min="1" {...ef("cuotas")}/></div>
               </div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:11}}>
+              <div className="g2">
                 <div><label className="ilbl">CATEGORÍA</label><select className="inp" {...ef("cat")}>{CATS.map(c=><option key={c}>{c}</option>)}</select></div>
                 <div><label className="ilbl">TARJETA *</label><select className="inp" {...ef("cardId")}>{cards.map(c=><option key={c.id} value={c.id}>{c.franchise} ····{c.last4}</option>)}</select></div>
               </div>
@@ -1436,7 +1552,7 @@ function AnalyticsScreen({cards,txns}){
 
   return(
     <div className="scr fadeIn">
-      <div style={{padding:"0 20px 16px"}}>
+      <div className="page-pad">
         <p className="lbl" style={{marginBottom:3}}>INTELIGENCIA</p>
         <h1 className="h1">Analítica ML</h1>
       </div>
@@ -1451,7 +1567,8 @@ function AnalyticsScreen({cards,txns}){
 
       {view==="overview"&&(
         <>
-          <div style={{margin:"0 20px 14px",padding:18,borderRadius:18,background:"var(--bg2)",border:"1px solid var(--b1)"}}>
+          <div className="analytics-pair">
+          <div className="mx-m" style={{padding:18,borderRadius:18,background:"var(--bg2)",border:"1px solid var(--b1)"}}>
             <p className="lbl" style={{marginBottom:14}}>SALUD FINANCIERA</p>
             <div style={{display:"flex",gap:18,alignItems:"center",marginBottom:16}}>
               <ScoreRing score={score} sz={92}/>
@@ -1471,18 +1588,21 @@ function AnalyticsScreen({cards,txns}){
               </div>
             );})}
           </div>
-          <div style={{margin:"0 20px 14px",padding:"14px 10px",borderRadius:18,background:"var(--bg2)",border:"1px solid var(--b1)"}}>
+          <div className="chart-box">
             <p className="lbl" style={{marginBottom:12}}>GASTO MENSUAL</p>
-            <ResponsiveContainer width="100%" height={138}>
+            <div className="chart-h">
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthly} margin={{top:4,right:4,left:0,bottom:0}} barSize={28}>
                 <XAxis dataKey="mes" tick={{fill:"#475569",fontSize:10,fontFamily:"var(--fn)"}} axisLine={false} tickLine={false}/>
                 <YAxis hide/><Tooltip content={<CTip/>}/>
                 <Bar dataKey="total" radius={[7,7,0,0]}>{monthly.map((_,i)=><Cell key={i} fill={i===5?"#00dfc8":"rgba(0,223,200,0.25)"}/>)}</Bar>
               </BarChart>
             </ResponsiveContainer>
+            </div>
+          </div>
           </div>
           {anomalies.length>0&&(
-            <div style={{margin:"0 20px 14px",padding:15,borderRadius:16,background:"var(--orb)",border:"1px solid var(--orbr)"}}>
+            <div className="mx-m" style={{padding:15,borderRadius:16,background:"var(--orb)",border:"1px solid var(--orbr)"}}>
               <p style={{fontSize:10,fontWeight:800,color:"var(--or)",letterSpacing:".1em",marginBottom:10}}>⚡ ANOMALÍAS DETECTADAS (ML Z-score)</p>
               {anomalies.slice(0,3).map((t,i)=>(
                 <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:i<2&&i<anomalies.length-1?"1px solid rgba(255,144,64,0.12)":"none"}}>
@@ -1497,10 +1617,11 @@ function AnalyticsScreen({cards,txns}){
 
       {view==="ml"&&(
         <>
-          <div style={{margin:"0 20px 14px",padding:"14px 10px",borderRadius:18,background:"var(--bg2)",border:"1px solid var(--b1)"}}>
+          <div className="chart-box">
             <p className="lbl" style={{marginBottom:4}}>PROYECCIÓN 3 MESES (regresión lineal)</p>
             <p style={{fontSize:10,color:"var(--m)",marginBottom:12}}>Puntos morados = predicciones ML</p>
-            <ResponsiveContainer width="100%" height={155}>
+            <div className="chart-h">
+            <ResponsiveContainer width="100%" height="100%">
               <LineChart data={futureData} margin={{top:4,right:4,left:0,bottom:0}}>
                 <XAxis dataKey="mes" tick={{fill:"#475569",fontSize:10,fontFamily:"var(--fn)"}} axisLine={false} tickLine={false}/>
                 <YAxis hide/><Tooltip content={<CTip/>}/>
@@ -1509,8 +1630,9 @@ function AnalyticsScreen({cards,txns}){
                 />
               </LineChart>
             </ResponsiveContainer>
+            </div>
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,padding:"0 20px 14px"}}>
+          <div className="g4 ml-stats">
             {[
               {ic:"📈",lb:"Fin de mes",v:COP(predicted),n:"Predicción mixta",cl:predicted>mTotal*1.1?"var(--rd)":"var(--tl)"},
               {ic:"🎯",lb:"Riesgo mínimo",v:`${riskMin}%`,n:"Basado en utilización",cl:riskMin>60?"var(--rd)":riskMin>35?"var(--or)":"var(--gn)"},
@@ -1598,7 +1720,7 @@ function AnalyticsScreen({cards,txns}){
               const estMonths=totalDebt>0?Math.ceil(totalDebt/monthlyPay):0;
               const monthlyInterest=Math.round(totalDebt*monthlyRate);
               return(
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
+            <div className="g2" style={{marginBottom:16}}>
               {[
                 {lb:"Deuda total",v:COP(totalDebt),cl:"var(--rd)"},
                 {lb:"Interés est. /mes",v:COP(monthlyInterest),cl:"var(--or)"},
@@ -1708,8 +1830,8 @@ Responde en español, sé directo y práctico. Usa pesos colombianos (COP/$). M�
   useEffect(()=>{endRef.current?.scrollIntoView({behavior:"smooth"});},[msgs,loading]);
 
   return(
-    <div className="scr fadeIn" style={{display:"flex",flexDirection:"column",height:"100%",paddingBottom:0}}>
-      <div style={{padding:"0 20px 12px",display:"flex",gap:12,alignItems:"center",flexShrink:0}}>
+    <div className="scr fadeIn copilot-scr">
+      <div className="page-pad" style={{display:"flex",gap:12,alignItems:"center",flexShrink:0,paddingBottom:12}}>
         <div style={{width:46,height:46,borderRadius:15,background:"linear-gradient(135deg,var(--tl),var(--tl2))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0,animation:"gl 2.5s ease-in-out infinite"}}>🤖</div>
         <div>
           <p style={{fontSize:15,fontWeight:800}}>Copiloto IA</p>
@@ -1717,14 +1839,14 @@ Responde en español, sé directo y práctico. Usa pesos colombianos (COP/$). M�
         </div>
         <span className="pill ptl" style={{marginLeft:"auto",fontSize:9}}>ML activo</span>
       </div>
-      <div className="hs" style={{padding:"0 20px 12px",flexShrink:0,gap:7}}>
+      <div className="hs px" style={{paddingBottom:12,flexShrink:0,gap:7}}>
         {SUGG.map(s=>(
           <button key={s} onClick={()=>send(s)} style={{padding:"7px 12px",borderRadius:100,background:"var(--tlb)",border:"1px solid var(--tlbr)",color:"var(--tl)",fontSize:11,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",fontFamily:"var(--fn)",transition:"all .15s"}}>
             {s}
           </button>
         ))}
       </div>
-      <div style={{flex:1,overflowY:"auto",padding:"0 20px 10px",display:"flex",flexDirection:"column",gap:10}}>
+      <div className="copilot-msgs">
         {msgs.map((m,i)=>(
           <div key={i} style={{display:"flex",flexDirection:"column",alignItems:m.role==="ai"?"flex-start":"flex-end"}}>
             {m.role==="ai"&&<div style={{width:24,height:24,borderRadius:8,background:"linear-gradient(135deg,var(--tl),var(--tl2))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,marginBottom:4}}>🤖</div>}
@@ -1741,7 +1863,7 @@ Responde en español, sé directo y práctico. Usa pesos colombianos (COP/$). M�
         )}
         <div ref={endRef}/>
       </div>
-      <div style={{flexShrink:0,padding:"10px 20px 88px",borderTop:"1px solid var(--b1)",background:"var(--bg)",display:"flex",gap:9}}>
+      <div className="copilot-foot">
         <input className="inp" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!e.shiftKey&&send()} placeholder="Pregunta sobre tus finanzas…" style={{flex:1}}/>
         <button onClick={()=>send()} style={{width:44,height:44,borderRadius:12,background:input?"linear-gradient(135deg,var(--tl),var(--tl2))":"var(--bg3)",border:input?"none":"1px solid var(--b2)",color:input?"#000":"var(--m)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,transition:"all .2s",fontFamily:"var(--fn)"}}>
           <IC.Send style={{width:17,height:17}}/>
@@ -1805,6 +1927,14 @@ export default function App(){
   const setAlerts=fn=>{const u=fn(alerts);setDisIds(u.filter(a=>a.dismissed).map(a=>a.id));};
   const TABS=["home","cards","registrar","analytics","copiloto"];
   const activeTab=TABS.includes(screen)?screen:"home";
+  const NAV_ITEMS=[
+    {id:"home",lb:"Inicio",Ic:IC.Home},
+    {id:"cards",lb:"Tarjetas",Ic:IC.Card},
+    {id:"registrar",lb:"Registrar",Ic:IC.Plus},
+    {id:"analytics",lb:"Analítica",Ic:IC.Chart},
+    {id:"copiloto",lb:"Copiloto",Ic:IC.Bot},
+  ];
+  const activeAlerts=alerts.filter(a=>!a.dismissed).length;
 
   const handleSkipAuth=()=>{localStorage.setItem("cfv6_guest","1");setGuestMode(true);};
   const handleLoadDemo=async()=>{await loadDemo();toast("✓ Datos de demostración cargados");};
@@ -1827,7 +1957,11 @@ export default function App(){
     <>
       <style>{CSS}</style>
       <div className="app">
-        <AuthScreen signIn={signIn} signUp={signUp} supabaseEnabled={supabaseEnabled} onSkip={handleSkipAuth}/>
+        <div className="main-col">
+          <div className="auth-inner">
+            <AuthScreen signIn={signIn} signUp={signUp} supabaseEnabled={supabaseEnabled} onSkip={handleSkipAuth}/>
+          </div>
+        </div>
       </div>
     </>
   );
@@ -1839,6 +1973,27 @@ export default function App(){
     <>
       <style>{CSS}</style>
       <div className="app">
+        <aside className="sidebar">
+          <div className="sb-brand-block">
+            <img src={`${import.meta.env.BASE_URL}logo-copiloto.png`} alt="Copiloto IA" className="brand-logo" style={{width:36,height:36,borderRadius:10}}/>
+            <div>
+              <h2>Copiloto IA</h2>
+              <p>Wealth Management</p>
+            </div>
+          </div>
+          <nav className="sb-nav">
+            {NAV_ITEMS.map(({id,lb,Ic})=>(
+              <button key={id} type="button" className={`sb-item${activeTab===id?" on":""}`} onClick={()=>setScreen(id)}>
+                {id==="home"&&activeAlerts>0&&screen!=="home"&&<span className="ndot"/>}
+                <Ic/>
+                <span>{lb}</span>
+              </button>
+            ))}
+          </nav>
+          <div className="sb-foot">Tarjetas · Analítica ML · Copiloto IA</div>
+        </aside>
+
+        <div className="main-col">
         {/* Status bar */}
         <div className="sb">
           <div className="sb-brand">
@@ -1863,21 +2018,16 @@ export default function App(){
         {screen==="copiloto"&&<CopilotoScreen cards={cards} txns={txns}/>}
         {screen==="alerts"&&<AlertsScreen alerts={alerts} setAlerts={setAlerts} setScreen={setScreen}/>}
 
-        {/* Nav bar */}
+        {/* Nav bar — mobile */}
         <div className="nav">
-          {[
-            {id:"home",lb:"Inicio",Ic:IC.Home},
-            {id:"cards",lb:"Tarjetas",Ic:IC.Card},
-            {id:"registrar",lb:"Registrar",Ic:IC.Plus},
-            {id:"analytics",lb:"Analítica",Ic:IC.Chart},
-            {id:"copiloto",lb:"Copiloto",Ic:IC.Bot},
-          ].map(({id,lb,Ic})=>(
+          {NAV_ITEMS.map(({id,lb,Ic})=>(
             <button key={id} className={`nt${activeTab===id?" on":""}`} onClick={()=>setScreen(id)}>
-              {id==="home"&&alerts.filter(a=>!a.dismissed).length>0&&screen!=="home"&&<span className="ndot"/>}
+              {id==="home"&&activeAlerts>0&&screen!=="home"&&<span className="ndot"/>}
               <Ic style={{width:21,height:21}}/>
               <span>{lb}</span>
             </button>
           ))}
+        </div>
         </div>
       </div>
     </>
