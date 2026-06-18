@@ -3,3 +3,5 @@ dist
 .env
 .env.local
 .cursor/mcp.json
+.vercel/*
+!.vercel/project.json

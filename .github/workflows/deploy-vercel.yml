@@ -5,6 +5,10 @@ on:
     branches: [master]
   workflow_dispatch:
 
+env:
+  VERCEL_ORG_ID: team_fcYDzz8xwUao0Tg7K8M0SMhi
+  VERCEL_PROJECT_ID: prj_UKTAWpHJAtoEeXhpWJ7N3ce3XIUN
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -22,25 +26,31 @@ jobs:
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
 
-      - name: Check Vercel token
+      - name: Check required secrets
         id: check
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
+          if [ -z "$VERCEL_TOKEN" ]; then
             echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "VERCEL_TOKEN no configurado. Agrega el secret en GitHub → Settings → Secrets."
+            echo "::warning::VERCEL_TOKEN no configurado en GitHub Secrets. Deploy omitido."
             exit 0
           fi
           echo "configured=true" >> "$GITHUB_OUTPUT"
+          if [ -n "$GROQ_API_KEY" ]; then
+            echo "has_groq=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_groq=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::GROQ_API_KEY no configurado. El copiloto IA no funcionará en producción."
+          fi
 
-      - name: Link and configure project
+      - name: Pull Vercel project settings
         if: steps.check.outputs.configured == 'true'
-        run: |
-          vercel link --yes --token="${{ secrets.VERCEL_TOKEN }}" \
-            ${{ secrets.VERCEL_SCOPE && format('--scope {0}', secrets.VERCEL_SCOPE) || '' }} \
-            ${{ secrets.VERCEL_PROJECT_ID && format('--project {0}', secrets.VERCEL_PROJECT_ID) || '' }}
+        run: vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
 
       - name: Configure GROQ_API_KEY on Vercel
-        if: steps.check.outputs.configured == 'true' && secrets.GROQ_API_KEY != ''
+        if: steps.check.outputs.configured == 'true' && steps.check.outputs.has_groq == 'true'
         run: |
           vercel env rm GROQ_API_KEY production --token="${{ secrets.VERCEL_TOKEN }}" --yes 2>/dev/null || true
           printf '%s' "${{ secrets.GROQ_API_KEY }}" | vercel env add GROQ_API_KEY production --token="${{ secrets.VERCEL_TOKEN }}"
@@ -49,7 +59,7 @@ jobs:
 
       - name: Build
         if: steps.check.outputs.configured == 'true'
-        run: npm run build
+        run: vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}"
         env:
           VITE_BASE_PATH: /
 

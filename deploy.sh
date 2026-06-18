@@ -60,7 +60,7 @@ echo ""
 echo "Desplegando en Vercel..."
 npx vercel --prod --yes \
   --token "$VERCEL_TOKEN" \
-  --scope "${VERCEL_SCOPE:-montoya8811-1146}"
+  --scope "${VERCEL_SCOPE:-montoya8811-1146s-projects}"
 
 echo ""
 echo "Despliegue completado."

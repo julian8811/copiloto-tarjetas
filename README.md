@@ -2,6 +2,8 @@
 
 App móvil de gestión de tarjetas de crédito con IA, analítica y copiloto financiero.
 
+**Producción:** https://copiloto-tarjetas.vercel.app
+
 ## Requisitos
 
 - Node.js 18+
@@ -38,10 +40,22 @@ npm test         # Tests unitarios
 
 ## Despliegue en Vercel
 
-1. Importa el repositorio en [vercel.com/new](https://vercel.com/new)
+Proyecto: `montoya8811-1146s-projects/copiloto-tarjetas`
+
+1. Importa el repositorio en [vercel.com/new](https://vercel.com/new) o usa el workflow de GitHub Actions
 2. Framework: Vite
-3. Agrega `GROQ_API_KEY` en Environment Variables
-4. Deploy
+3. Agrega `GROQ_API_KEY` en Environment Variables (Production + Preview)
+4. En GitHub → Settings → Secrets → Actions, configura:
+   - `VERCEL_TOKEN` — token de Vercel
+   - `GROQ_API_KEY` — API key de Groq para el copiloto
+5. Asegúrate de que la protección SSO del proyecto solo aplique a **Preview** (no a Production), para que el sitio sea público
+
+Deploy manual:
+
+```bash
+export VERCEL_TOKEN=tu_token
+npx vercel --prod --scope montoya8811-1146s-projects
+```
 
 ## Supabase (opcional)
 
